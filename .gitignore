@@ -1,0 +1,17 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.bak
+
+# Large binaries not needed for compilation
+figures/*.mp4
+
+# Directories not needed on Overleaf
+outputs/
+generated_figures/

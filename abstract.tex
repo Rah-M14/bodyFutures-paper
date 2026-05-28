@@ -1,0 +1,22 @@
+% 250-word abstract for venues with strict word limits (e.g. extended abstracts, workshop submissions)
+% Full abstract in draft.tex; keep in sync after TH v3 results arrive.
+\begin{abstract}
+Deployed robots degrade: joints heat, actuators wear, energy depletes.
+Current approaches either ignore degradation until collapse or penalise immediate body signals reactively---neither exploits the \emph{predictive} structure of degradation dynamics.
+We propose \textbf{predictive interoception}: continuous prediction and proactive management of future body-health loss, before collapse occurs.
+
+We introduce \textbf{BodyFutures-Bench}, a four-morphology MuJoCo benchmark (three locomotion, one manipulation) with action-induced degradation and noisy interoceptive sensing, centred on \textbf{Future Action Capacity (FAC)}---a graded measure of preserved actuator authority.
+Our method, \textbf{Interoceptive World Models (IWM)}, learns a multi-horizon body predictor on coverage-gated rollouts and uses predicted future FAC loss as a shaping signal.
+We formalise proactivity via the \textbf{Interoceptive Anticipation Horizon (IAH)}: timesteps \emph{before} collapse at which the predictor first signals danger---unavailable to reactive or recurrent baselines.
+
+On FeverAnt (5 seeds, 10M steps, $n\!=\!50$ episodes), PPO-IWM achieves mean \textbf{IAH\,=\,379~steps}---a per-timestep, queryable prediction of remaining healthy capacity absent from all baselines.
+This forward signal drives \textbf{Pareto-dominance} with zero collapse: \textbf{+10.7\% task reward} ($p\!=\!5.1{\times}10^{-8}$) and \textbf{+10.4\% final body health} ($p\!=\!2.8{\times}10^{-17}$) simultaneously.
+\textbf{80.1\% of the advantage derives from 24.1\% lower control cost}; reactive baselines collapse in 38--48\% of episodes.
+A recurrent baseline (LSTM) collapses in 88\% of episodes at matched compute (10M steps, 5 seeds); \textbf{IAH\,$=$\,0}---no forward signal, no deployable safety certificate.
+
+Cross-morphology evaluation on WoundWalker confirms $+4.7\%$ FAC advantage (5 seeds each, $n\!=\!52$ episodes, $p\!=\!0.04$); survival difference not significant ($p\!=\!0.66$); IWM shows $5{\times}$ lower survival variance than Task.
+A pre-registered manipulation experiment (NumbArm, observable numbness) \textbf{confirms} IWM advantage: $+3.5\%$ FAC ($p\!=\!2.8{\times}10^{-10}$) with zero collapse for both methods.
+ThermalHopper reveals a falsifiable scope condition: IWM fails when the dominant failure pathway is unobservable.
+Adaptive IWM (AIWM) achieves $+9.4$--$+13.9\%$ prediction advantage under hidden gear-ratio drift.
+BodyFutures-Bench enables systematic evaluation of predictive body-awareness in long-horizon deployment.
+\end{abstract}
