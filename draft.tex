@@ -54,9 +54,9 @@ The body of a robot is part of the dynamics, not a passive conduit. A locomotion
 
 We introduce BodyFutures-Bench to operationalize this challenge. The suite wraps standard MuJoCo tasks with latent body variables - energy, temperature, impact stress, wounds, damage, and sensor numbness - that affect future dynamics by weakening actuators, corrupting proprioception, and triggering collapse. Each environment logs a shared diagnostic contract (task reward, FAC, energy, damage, collapse) and exposes a ``sprinter vs.\ survivor'' tension: task-only policies deplete the body for short-horizon gain, while self-preserving policies should maintain future action capacity.
 
-We address this with an \textbf{Interoceptive World Model (IWM)}: a neural predictor that learns which actions will erode the body's future ability to act, and uses that foresight to shape a policy that is simultaneously safer and more efficient. Rather than reacting to damage already done, the agent predicts it before it happens - and adjusts behavior accordingly. An \textbf{Adaptive IWM (AIWM)} extends this by updating its body model at deployment time, personalizing predictions to the specific robot at hand without any retraining of the control policy.
+We address this with an \textbf{Interoceptive World Model (IWM)}: a neural predictor that learns which actions will erode the body's future ability to act, and uses that foresight to shape a policy that is simultaneously safer and more efficient. Rather than reacting to damage already done, the agent predicts it before it happens, and adjusts behavior accordingly. An \textbf{Adaptive IWM (AIWM)} extends this by updating its body model at deployment time, personalizing predictions to the specific robot at hand without any retraining of the control policy.
 
-Five contributions: \textbf{(1)}~A deployable advance-warning metric - the Interoceptive Anticipation Horizon (IAH) - that quantifies how early a robot detects its own impending collapse. Our method achieves a 379-step warning; no reactive or recurrent baseline achieves any warning at all. \textbf{(2)}~Simultaneous Pareto-dominance across task performance, body health, and zero collapse - verified across four robot morphologies with a matched training budget. \textbf{(3)}~A falsifiable observability criterion that predicts exactly when interoceptive prediction helps and when it does not. \textbf{(4)}~BodyFutures-Bench: four environments with a shared body-health diagnostic contract and all checkpoints publicly released. \textbf{(5)}~Online body-model personalization for deployment-time adaptation without policy retraining.
+Five contributions: \textbf{(1)}~A deployable advance-warning metric, the Interoceptive Anticipation Horizon (IAH), that quantifies how early a robot detects its own impending collapse. Our method achieves an average 379-step warning; no reactive or recurrent baseline achieves any warning at all. \textbf{(2)}~Simultaneous Pareto-dominance across task performance, body health, and zero collapse, verified across four robot morphologies with a matched training budget. \textbf{(3)}~A falsifiable observability criterion that predicts exactly when interoceptive prediction helps and when it does not. \textbf{(4)}~BodyFutures-Bench: four environments with a shared body-health diagnostic contract and all checkpoints publicly released. \textbf{(5)}~Online body-model personalization for deployment-time adaptation without policy retraining.
 
 A contributions checklist with evidence pointers appears in Table~\ref{tab:contributions} (Appendix~\ref{app:contributions}).
 
@@ -401,7 +401,7 @@ Robots that model their own future body health discover torque-efficient locomot
 \label{tab:contributions}
 \setlength{\tabcolsep}{4pt}
 \small
-\begin{tabular}{lp{6.8cm}p{3.6cm}}
+\begin{tabular}{lp{7.1cm}p{2.8cm}}
 \toprule
 \textbf{Contribution} & \textbf{Claim} & \textbf{Evidence} \\
 \midrule
