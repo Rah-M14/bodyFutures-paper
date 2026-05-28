@@ -1191,5 +1191,53 @@ At commercial cloud rates (\$2.00--\$3.50/GPU-hour for A100-equivalent), the ful
 \textbf{Fast reproducibility.}
 The included \texttt{reproduce\_paper.sh} script runs a single-seed, 1M-step fast verification (${\approx}$45\,min on RTX 4090) producing a Table~\ref{tab:main} subset that confirms the direction of all primary claims before committing to full training runs.
 
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Agent Behavior Over Time}
+\label{app:timeseries}
+
+Figures~\ref{fig:timeseries_fa}--\ref{fig:timeseries_na} show side-by-side snapshots of PPO-IWM (top row) and PPO-Task (bottom row) at six timesteps across all four environments.
+Each cell displays the raw MuJoCo render with a colour-coded FAC gauge bar at the bottom (green = healthy, red = critical; dashed line at the FAC\,=\,0.5 collapse threshold) and text overlays showing the current FAC value and mean absolute action magnitude $|a|$.
+Cells marked \textsc{Collapse} indicate that the episode terminated before that timestep; the reported FAC and frame are frozen at the final step.
+
+These visualisations illustrate the core behavioural difference: the PPO-IWM agent consistently applies lower-magnitude actions, sustaining higher FAC throughout the episode, while PPO-Task saturates actuators early and either collapses or enters a deeply degraded state.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_timeseries_fa.pdf}
+  \caption{\textbf{FeverAnt — agent behavior over time.}
+    PPO-IWM (top) maintains FAC above 0.5 throughout the 5000-step episode by applying 27--38\% lower torque at distal joints.
+    PPO-Task drives joints at near-saturation torques, accumulating thermal load that pushes FAC steadily downward.
+    Neither agent collapses on this particular seed; the FAC gap at episode end ($\Delta$FAC\,$\approx$\,0.05) reflects the sustained difference in actuator efficiency.}
+  \label{fig:timeseries_fa}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_timeseries_ww.pdf}
+  \caption{\textbf{WoundWalker — agent behavior over time.}
+    Both agents encounter spike terrain that accumulates joint damage.
+    PPO-Task collapses around step 3738; PPO-IWM continues longer but also ultimately collapses on this particular seed (step 3802), as WoundWalker damage is partially observable.
+    The IWM agent's FAC degrades more slowly due to conservative contact forces early in the episode.}
+  \label{fig:timeseries_ww}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_timeseries_th.pdf}
+  \caption{\textbf{ThermalHopper — agent behavior over time.}
+    ThermalHopper includes an unobservable landing-impact FAC term that limits IWM benefit (see Appendix~\ref{app:scope}).
+    Both agents collapse on this seed (PPO-Task at step 1325, PPO-IWM at step 1551); the modest delay reflects the IWM's partial protection from the observable thermal component, while the unobservable landing load drives ultimate collapse.}
+  \label{fig:timeseries_th}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_timeseries_na.pdf}
+  \caption{\textbf{NumbArm — agent behavior over time.}
+    Progressive joint numbness accumulates slowly; neither agent collapses on this seed at 5000 steps.
+    PPO-IWM maintains marginally higher FAC (0.958 vs.\ 0.952) through lower-magnitude joint torques, consistent with the aggregate results in Table~\ref{tab:multienv}.}
+  \label{fig:timeseries_na}
+\end{figure}
+
 \end{document}
 
