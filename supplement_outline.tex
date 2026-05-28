@@ -1,0 +1,122 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\title{Supplementary Material Outline: BodyFutures-Bench}
+\author{Anonymous Authors}
+
+\begin{document}
+\maketitle
+
+\section{Environment Specifications}
+
+The supplement will provide the complete equations and locked configuration
+values for each BodyFutures environment.
+
+\begin{table}[h]
+\centering
+\caption{Supplement environment equation checklist.}
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+Environment & Required details \\
+\midrule
+FeverAnt & Temperature, energy, torque damage, actuator weakening, FAC,
+collapse thresholds, observation modes. \\
+WoundWalker & Wound accumulation, impact load, balance health, energy,
+actuator weakening, FAC, collapse thresholds. \\
+ThermalHopper & Heat from action and landing impact, cooling, damage,
+energy, actuator weakening, FAC. \\
+NumbArm & Numbness, proprioceptive corruption, manipulation load,
+damage, energy, action rescaling, success criterion, FAC. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Preregistered Protocol}
+
+This section will reproduce the frozen CoRL manifest:
+seeds, train budgets, episode lengths, evaluation horizons, baseline list,
+checkpoint-selection score, IWM dataset mixture, coverage gates, and final
+metric definitions.  Any deviation from the manifest will be listed with a
+version identifier and reason.
+
+\section{Run Commands}
+
+The supplement will include command-line recipes for reproducing the final
+experiments:
+\begin{verbatim}
+bash experiments/run_corl_2026_rescue_primary.sh
+bash experiments/run_corl_2026_primary.sh
+bash experiments/run_corl_2026_secondary.sh
+bash experiments/run_corl_2026_all.sh
+\end{verbatim}
+For archival final sweeps, the exact manifest version, output root, run id,
+and seed set will be reported.
+
+\section{Weights and Biases Metric Schema}
+
+All scalar metrics will be logged against a shared global step.  The supplement
+will list stable metric keys for training, rollout diagnostics, body state,
+evaluation, inference, IWM training, and policy video.  Step-specific video
+filenames may exist locally for traceability, but W\&B keys will remain stable.
+
+\section{IWM Dataset Coverage}
+
+For each environment and seed, the supplement will report:
+\begin{itemize}
+    \item transition count and episode count by collection mode;
+    \item FAC minimum, mean, standard deviation, and histogram;
+    \item fraction of samples below FAC thresholds $0.75$ and $0.50$;
+    \item collapse-adjacent fraction and collapse labels;
+    \item whether automatic coverage repair was invoked.
+\end{itemize}
+
+\section{IWM Architecture and Training}
+
+The supplement will provide model dimensions, ensemble size, input layout,
+horizon heads, loss weights, optimizer settings, batch size, device placement,
+and calibration diagnostics.  For final runs, ensemble size and training
+settings will be frozen before seed sweeps.
+
+\section{Evaluation Details}
+
+The supplement will define:
+\begin{itemize}
+    \item task reward per step and cumulative task return;
+    \item survival fraction and collapse rate;
+    \item final FAC, minimum FAC, viability cost, and body score;
+    \item early-warning time before collapse;
+    \item prediction RMSE, low-FAC error, calibration, AUROC, and AUPRC;
+    \item bootstrap or Student confidence interval computation.
+\end{itemize}
+
+\section{Compute Budget}
+
+The final supplement will report CPU model, GPU model, RAM, number of vector
+environments, wall-clock runtime per method, IWM training time, and total compute
+used for final runs.  Pilot and debugging compute will be reported separately
+from frozen result compute.
+
+\section{Video Storyboard}
+
+The video supplement will show:
+\begin{enumerate}
+    \item FeverAnt task PPO sprinting early and degrading over long horizons;
+    \item FeverAnt PPO-IWM preserving FAC while retaining task progress;
+    \item WoundWalker comparison under long-horizon degradation;
+    \item IWM calibration visualization and FAC trajectories;
+    \item representative failure cases where IWM is overconservative or
+    miscalibrated.
+\end{enumerate}
+
+\section{Failure Cases and Negative Results}
+
+The supplement will explicitly include runs where PPO-IWM fails to improve over
+current-viability PPO or loses too much task reward.  These cases are important
+for identifying whether the contribution is stronger as a benchmark and
+prediction protocol, or as an algorithm that reliably improves the full
+task-viability Pareto frontier.
+
+\end{document}
