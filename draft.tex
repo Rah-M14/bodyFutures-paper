@@ -311,7 +311,7 @@ NA PPO-IWM & 10M & 5000 & $\mathbf{-0.548\pm0.397}$ & $\mathbf{0.953\pm0.012}$ &
 \raggedright\footnotesize{$\ddagger$ V1: no coverage-gating; no IWM advantage. WW V2: bimodal Task seeds 3--4 slow gait ($\sigma_\mathrm{surv}\!=\!997$) vs IWM consistent ($\sigma\!=\!194$). NA Task seed~1 outlier: FAC\,=\,0.835; IWM 0.938--0.965 ($\sigma$: 0.011 vs Task 0.050). Full per-seed breakdowns in Appendix~\ref{app:scope}.}
 \end{table}
 
-Survival comparisons and per-joint torque analysis: Figures~\ref{fig:survival},~\ref{fig:torque_detail} (Appendix~\ref{app:results}). Ablation bar charts and full table: Figures~\ref{fig:ablation},~\ref{fig:ablationcurves}, Table~\ref{tab:ablations} (Appendix~\ref{app:ablations}).
+Survival comparisons and per-joint torque analysis: Figures~\ref{fig:survival},~\ref{fig:torque_violin},~\ref{fig:ctrl_fac_scatter} (Appendix~\ref{app:results}). Ablation bar charts and full table: Figures~\ref{fig:ablation},~\ref{fig:ablationcurves}, Table~\ref{tab:ablations} (Appendix~\ref{app:ablations}).
 
 \section{Discussion}
 \label{sec:discussion}
@@ -476,23 +476,16 @@ Reward decomposition and mechanism analysis are shown in Fig.~\ref{fig:mechanism
 
 \begin{figure}[t]
 \centering
-\begin{minipage}[t]{0.56\linewidth}
-  \includegraphics[width=\linewidth]{figures/fig_torque_violin.pdf}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.41\linewidth}
-  \includegraphics[width=\linewidth]{figures/fig_ctrl_fac_scatter.pdf}
-\end{minipage}
-\caption{\textbf{Per-joint torque analysis on FeverAnt (5 episodes per method, 8 joints).}
-\emph{(a) Left}: Per-joint median absolute torque.
-PPO-Task saturates every actuator at the physical limit (median $|a_j|\!=\!1.000$ across all 8 joints).
-PPO-IWM de-saturates all 8 joints by 27--38\%,
-with the largest reductions at distal joints (joints~2, 3, 6) that bear the most thermal load.
-This universal de-saturation is not programmed; it emerges from multi-horizon body prediction.
-\emph{(b) Right}: Cross-sectional control cost vs.\ instantaneous FAC.
-PPO-Task: $r\!=\!-0.127$ ($p\!=\!3.3{\times}10^{-55}$), confirming that high torques destroy body capacity.
-PPO-IWM: $r\!\approx\!0.028$ ($p\!\approx\!6{\times}10^{-4}$, near-zero) - the IWM has \emph{decoupled}
-torque from body degradation, the mechanistic signature of interoceptive efficiency.}
-\label{fig:torque_detail}
+\includegraphics[width=\linewidth]{figures/fig_torque_violin.pdf}
+\caption{\textbf{Per-joint torque de-saturation on FeverAnt (5 episodes per method, 8 joints).} PPO-Task saturates every actuator at the physical limit (median $|a_j|\!=\!1.000$ across all 8 joints). PPO-IWM de-saturates all 8 joints by 27--38\%, with the largest reductions at distal joints (joints~2, 3, 6) that bear the most thermal load. This universal de-saturation is not programmed; it emerges from multi-horizon body prediction.}
+\label{fig:torque_violin}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/fig_ctrl_fac_scatter.pdf}
+\caption{\textbf{Mechanistic decoupling: control cost vs.\ instantaneous FAC on FeverAnt.} PPO-Task: $r\!=\!-0.127$ ($p\!=\!3.3{\times}10^{-55}$) - confirming that high torques destroy body capacity. PPO-IWM: $r\!\approx\!0.028$ ($p\!\approx\!6{\times}10^{-4}$, near-zero) - the IWM has \emph{decoupled} torque from body degradation, the mechanistic signature of interoceptive efficiency.}
+\label{fig:ctrl_fac_scatter}
 \end{figure}
 
 \begin{table}[t]
