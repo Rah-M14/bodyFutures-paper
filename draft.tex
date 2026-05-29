@@ -15,9 +15,9 @@
 \definecolor{maroonhl}{HTML}{FAE8EC}
 \usepackage{float}
 \usepackage{titlesec}
-\titlespacing*{\section}{0pt}{8pt plus 3pt minus 2pt}{4pt plus 2pt minus 1pt}
-\titlespacing*{\subsection}{0pt}{6pt plus 2pt minus 1pt}{3pt plus 1pt}
-\titlespacing*{\subsubsection}{0pt}{4pt plus 1pt minus 1pt}{2pt}
+\titlespacing*{\section}{0pt}{12pt plus 4pt minus 2pt}{5pt plus 2pt minus 1pt}
+\titlespacing*{\subsection}{0pt}{9pt plus 3pt minus 2pt}{3pt plus 1pt}
+\titlespacing*{\subsubsection}{0pt}{6pt plus 2pt minus 1pt}{2pt}
 \setlength{\floatsep}{4pt plus 2pt minus 1pt}
 \setlength{\textfloatsep}{8pt plus 2pt minus 4pt}
 \setlength{\intextsep}{4pt plus 2pt minus 1pt}
@@ -323,8 +323,8 @@ PPO-Viability$^\dagger$ & \multicolumn{2}{c}{0.851 / 38\% collapse} & \multicolu
 LSTM-PPO & \multicolumn{2}{c}{0.660 / \textbf{88\% collapse}} & \multicolumn{2}{c}{memory only; no advance warning} \\
 \bottomrule
 \end{tabular}
-\raggedright\footnotesize{$\dagger$~Surviving eps.\ only (selection bias). $\ddagger$~ThermalHopper landing-impact unobservable to IWM; validates scope condition.}
 \end{table}
+\noindent\small{$^\dagger$ Surviving eps.\ only (selection bias). \quad $^\ddagger$ ThermalHopper landing-impact unobservable to IWM; validates scope condition.}
 
 Extended evidence is collected in the appendix: survival comparisons, training curves, and per-joint torque analysis (Appendix~\ref{app:results}); cross-environment per-seed breakdowns with observability scope validation (Table~\ref{tab:multienv}, Appendix~\ref{app:scope}); ablation bar charts and full ablation table (Table~\ref{tab:ablations}, Appendix~\ref{app:ablations}); and checkpoint selection via Pareto-dominance over task reward, FAC, and survival (Appendix~\ref{app:hyperparams}).
 
