@@ -53,22 +53,9 @@ The Interoceptive World Model (IWM) predicts future FAC loss across four horizon
 \end{figure*}
 
 \begin{abstract}
-Robots degrade not from external hazards but from their own actions: unconstrained actuator use
-erodes joints, overheats motors, and depletes energy stores, causing future control authority to
-collapse irreversibly. Existing safe-RL methods guard against external constraint violations and
-react only when degradation is already catastrophic; no prior method produces a deployable,
-forward-looking signal of how far a robot is from losing the ability to act at all. We introduce the
-\textbf{Interoceptive World Model (IWM)}: a neural predictor trained jointly with a control policy
-that forecasts future body-capacity loss across four horizons (1, 5, 25, 100 steps) and reshapes
-behavior preemptively. An \textbf{Adaptive IWM (AIWM)} extends this with online body-model
-personalization at deployment without retraining.
+Robots degrade not from external hazards but from their own actions: unconstrained actuator use erodes joints, overheats motors, and depletes energy stores, causing future control authority to collapse irreversibly. Existing safe-RL methods guard against external constraint violations and react only when degradation is already catastrophic; no prior method produces a deployable, forward-looking signal of how far a robot is from losing the ability to act at all. We introduce the \textbf{Interoceptive World Model (IWM)}: a neural predictor trained jointly with a control policy that forecasts future body-capacity loss across four horizons (1, 5, 25, 100 steps) and reshapes behavior preemptively. An \textbf{Adaptive IWM (AIWM)} extends this with online body-model personalization at deployment without retraining.
 
-Evaluated across BodyFutures-Bench (four MuJoCo environments with latent body dynamics), IWM
-achieves \textbf{zero collapse} across all environments (versus 38--88\% for all baselines), a
-\textbf{379-step advance warning} of impending failure (Interoceptive Anticipation Horizon;
-IAH\,=\,0 for every reactive and recurrent baseline), and \textbf{10.7\% higher task reward},
-achieved entirely through emergent torque efficiency with no speed increase. We release
-BodyFutures-Bench, a deployable IAH safety metric, and all checkpoints.
+Evaluated across BodyFutures-Bench (four MuJoCo environments with latent body dynamics), IWM achieves \textbf{zero collapse} across all environments (versus 38--88\% for all baselines), a \textbf{379-step advance warning} of impending failure (Interoceptive Anticipation Horizon; IAH\,=\,0 for every reactive and recurrent baseline), and \textbf{10.7\% higher task reward}, achieved entirely through emergent torque efficiency with no speed increase. We release BodyFutures-Bench, a deployable IAH safety metric, and all checkpoints.
 \end{abstract}
 
 \keywords{robot learning, world models, robot safety}
@@ -354,8 +341,10 @@ The 379-step IAH at 50\,Hz gives ${\approx}$7.5\,s of supervisory lead time; the
 
 Robots that model their own future body health discover torque-efficient locomotion as an emergent strategy, achieving Pareto-dominance over the task-only baseline, simultaneously more efficient ($+10.7\%$), healthier ($+10.4\%$ FAC), and zero-collapse, all without any explicit efficiency constraint. IWM is the only method that simultaneously improves task competence ($p\!=\!5.1{\times}10^{-8}$), body health ($p\!=\!2.8{\times}10^{-17}$), and achieves zero collapse with a deployable 379-step advance warning absent from all baselines. Cross-morphology evaluation confirms the falsifiable scope condition: NumbArm ($+3.5\%$ FAC); ThermalHopper ($-19\%$ FAC). We release BodyFutures-Bench with all checkpoints and invite adoption of IAH as a standard diagnostic for long-horizon robot health.
 
+\newpage
 \bibliography{references}
 
+\newpage
 \appendix
 
 \section*{Appendix Table of Contents}
@@ -1216,9 +1205,6 @@ FeverAnt (5 seeds $\times$ 4 methods, 10M steps each): ${\approx}$144 GPU-hours.
 
 \textbf{Estimated cost.}
 At commercial cloud rates (\$2.00--\$3.50/GPU-hour for A100-equivalent), the full experimental suite would cost approximately \$610--\$1,068.  With the RTX 4090 locally, the compute cost is amortized over the hardware.
-
-\textbf{Fast reproducibility.}
-The included \texttt{reproduce\_paper.sh} script runs a single-seed, 1M-step fast verification (${\approx}$45\,min on RTX 4090) producing a Table~\ref{tab:main} subset that confirms the direction of all primary claims before committing to full training runs.
 
 \end{document}
 
