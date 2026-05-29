@@ -49,7 +49,7 @@
 
 \begin{figure*}[h]
 \centering
-\includegraphics[width=0.99\linewidth]{figures/b_overview.png}
+\includegraphics[width=\linewidth]{figures/b_overview.png}
 \caption{\textbf{Overview: problem, method, and results.}
 A task-only agent depletes its body capacity (Future Action Capacity or FAC) through unconstrained actuator use and collapses, detectable only at the moment of failure.
 The Interoceptive World Model (IWM) predicts future FAC loss across four horizons, shapes the policy preemptively, and achieves zero collapse, an average 379-step advance warning, and 10.7\% higher task reward, simultaneously, across all evaluated environments.}
@@ -59,13 +59,8 @@ The Interoceptive World Model (IWM) predicts future FAC loss across four horizon
 
 \begin{abstract}
 Robots degrade not from external hazards but from their own actions: unconstrained actuator use overheats motors, compounds joint damage, and depletes energy reserves, collapsing the robot's ability to control itself in ways that are invisible until the moment of failure.
-Existing safe-RL methods guard against external constraint violations; no prior method gives a robot a forward-looking signal of how far it is from losing the ability to act at all.
-
-We introduce the \textbf{Interoceptive World Model (IWM)}: a neural predictor trained jointly with a control policy that forecasts how current actions will erode future control authority, shaping behavior preemptively rather than reacting to damage already done.
-An \textbf{Adaptive IWM (AIWM)} extends this with online body-model personalization at deployment without policy retraining.
-
-The most striking consequence is not safety but efficiency.
-On BodyFutures-Bench, four MuJoCo environments with latent body degradation dynamics, IWM agents discover torque-efficient locomotion as an emergent property of self-preservation: the agent learns to be gentle with its joints not because gentleness is rewarded, but because overexertion destroys its future.
+Existing safe-RL methods guard against external constraint violations; no prior method gives a robot a forward-looking signal of how far it is from losing the ability to act at all. We introduce the \textbf{Interoceptive World Model (IWM)}: a neural predictor trained jointly with a control policy that forecasts how current actions will erode future control authority, shaping behavior preemptively rather than reacting to damage already done.
+An \textbf{Adaptive IWM (AIWM)} extends this with online body-model personalization at deployment without policy retraining. The most striking consequence is not safety but efficiency. On BodyFutures-Bench, four MuJoCo environments with latent body degradation dynamics, IWM agents discover torque-efficient locomotion as an emergent property of self-preservation: the agent learns to be gentle with its joints not because gentleness is rewarded, but because overexertion destroys its future.
 IWM simultaneously achieves zero collapse, higher task reward, and better body health, strict Pareto-dominance with no efficiency objective, while providing a deployable advance warning of impending incapacitation (Interoceptive Anticipation Horizon; IAH) absent from every reactive and memory-based baseline.
 We release BodyFutures-Bench, all checkpoints, and IAH as a standard diagnostic for long-horizon robot health.
 \end{abstract}
@@ -184,7 +179,7 @@ The final protocol uses an ensemble of bootstrapped predictors.  The ensemble is
 
 \begin{figure*}[h]
 \centering
-\includegraphics[width=0.99\linewidth]{figures/b_methodology.png}
+\includegraphics[width=\linewidth]{figures/b_methodology.png}
 \caption{\textbf{IWM methodology overview.}
 The Interoceptive World Model (IWM) observes body state and predicts future FAC loss at four horizons ($h \in \{1,5,25,100\}$ steps), enabling coverage-gated training on near-collapse data and multi-horizon shaping of the PPO policy.
 CG-IWM and AIWM extend the trained predictor to deployment-time action gating and online EWC-regularised body-model personalization, respectively.}
@@ -267,7 +262,7 @@ PPO-IWM is the only method achieving zero collapse while simultaneously improvin
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.99\linewidth]{figures/fig7_reward_decomposition.pdf}
+\includegraphics[width=\linewidth]{figures/fig7_reward_decomposition.pdf}
 \caption{\textbf{IWM achieves reward through torque efficiency, not speed (FeverAnt; 5 seeds, 50 eps).}
 \textit{(a)}~Reward decomposition (velocity green, control-cost savings blue): PPO-IWM's $+10.7\%$ advantage traces $80.1\%$ to $24.1\%$ lower control cost ($p\!=\!4.8{\times}10^{-17}$) and $19.9\%$ to velocity ($p\!=\!1.00$, n.s.).
 Energy/Viability bars reflect surviving episodes only (selection bias inflates their control-cost savings; see Table~\ref{tab:decomp}).
@@ -360,9 +355,9 @@ LSTM-PPO & \multicolumn{2}{c}{0.660 / \textbf{88\% collapse}} & \multicolumn{2}{
 \section{Limitations}
 \label{sec:limitations}
 
-\textbf{Assumptions and hardware.} Degradation constants ($\alpha,\beta,\gamma$) are not calibrated to specific hardware; real-world validation is required before deployment. WoundWalker V2 achieves $+4.7\%$ FAC ($p\!=\!0.04$, $n\!=\!52$) but 96\% IWM collapse: terminal energy depletion dominates both methods; the FAC advantage is body-preservation \emph{within} episodes, independent of survival (Appendix~\ref{app:scope}).
+\textbf{Assumptions and hardware.} Degradation constants ($\alpha,\beta,\gamma$) are not calibrated to specific hardware; real-world validation is required before deployment. WoundWalker V2 achieves $+4.7\%$ FAC ($p\!=\!0.04$, $n\!=\!52$) but 96\% IWM collapse: terminal energy depletion dominates both methods; the FAC advantage is body-preservation \emph{within} episodes, independent of survival (Appendix~\ref{app:scope}). 
 
-\textbf{Scope conditions.} The observability criterion (Q3, Table~\ref{tab:summary}) is the primary scope condition; full per-morphology scope analysis is in Appendix~\ref{app:scope}.
+\textbf{Scope conditions.} The observability criterion (Q3, Table~\ref{tab:summary}) is the primary scope condition; full per-morphology scope analysis can be found in Appendix~\ref{app:scope}.
 
 \section{Conclusion}
 \label{sec:conclusion}
