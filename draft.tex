@@ -180,6 +180,15 @@ Each environment couples temperature-like stress, damage, and energy with action
 \end{equation}
 The final protocol uses an ensemble of bootstrapped predictors.  The ensemble is important because body-preservation penalties should be conservative when the model is uncertain in low-FAC or collapse-adjacent states.
 
+\begin{figure*}[h]
+\centering
+\includegraphics[width=0.99\linewidth]{figures/b_methodology.png}
+\caption{\textbf{IWM methodology overview.}
+The Interoceptive World Model (IWM) observes body state and predicts future FAC loss at four horizons ($h \in \{1,5,25,100\}$ steps), enabling coverage-gated training on near-collapse data and multi-horizon shaping of the PPO policy.
+CG-IWM and AIWM extend the trained predictor to deployment-time action gating and online EWC-regularised body-model personalization, respectively.}
+\label{fig:methods_overview}
+\end{figure*}
+
 \methodsec{Coverage-gated data.}
 Task-policy rollouts are biased toward healthy states, making future-risk estimates overconfident where preservation matters most. We collect a mixture of task, high-stress, and near-collapse episodes, and require hard coverage gates ($\min\fac\!<\!0.5$, $\geq\!2\%$ samples below $\fac\!=\!0.5$) before IWM training; if gates fail, targeted stress data is appended (gate thresholds and mixture details in Appendix~\ref{app:hyperparams}).
 
@@ -214,14 +223,6 @@ PPO-IWM trains from scratch with the IWM-shaped reward as the sole training sign
 \end{equation}
 This reward is used for learning only.  It is not a primary evaluation metric. All method comparisons report task and body outcomes separately.
 
-\begin{figure*}[h]
-\centering
-\includegraphics[width=0.99\linewidth]{figures/b_methodology.png}
-\caption{\textbf{IWM methodology overview.}
-The Interoceptive World Model (IWM) observes body state and predicts future FAC loss at four horizons ($h \in \{1,5,25,100\}$ steps), enabling coverage-gated training on near-collapse data and multi-horizon shaping of the PPO policy.
-CG-IWM and AIWM extend the trained predictor to deployment-time action gating and online EWC-regularised body-model personalization, respectively.}
-\label{fig:methods_overview}
-\end{figure*}
 
 \methodsec{Capacity-Gated IWM (deployment).}
 CG-IWM applies the trained IWM as a deployment-time action governor - no policy retraining (Appendix~\ref{app:architecture}). CG-IWM (aggressive-gait seeds 0--2, $n\!=\!30$, $\tau\!=\!0.10$) Pareto-dominates training-time baselines: r/step\,=\,$1.106\!\pm\!0.077$, FAC\,=\,$0.884\!\pm\!0.019$, 0\% collapse (Fig.~\ref{fig:cg_action_dist}). Intra-environment CG-IWM on NumbArm (5 seeds, $n\!=\!46$, same protocol) achieves FAC\,=\,$0.997\!\pm\!0.001$ vs.\ NumbArm PPO-Task FAC\,=\,$0.920$ ($+8.3\%$; $p\!=\!1.7{\times}10^{-17}$) - near-perfect body preservation; cross-environment scope conditions are in Appendix~\ref{app:scope}. The key distinction: CG-IWM produces \textbf{no IAH} (gate prevents collapse but cannot report predicted remaining capacity), whereas PPO-IWM provides a queryable IAH\,=\,379-step certificate.
@@ -257,7 +258,7 @@ Table~\ref{tab:main} reports primary results (5 seeds, 50 eval episodes). \textb
 \label{par:mechanism}
 \textbf{80.1\% of the reward advantage comes from 24.1\% lower control cost} ($0.219\!\pm\!0.004$ vs $0.288\!\pm\!0.007$; $p\!=\!4.8{\times}10^{-17}$), not from speed ($\Delta v\!=\!+0.017$\,m/s; $p\!=\!1.00$, n.s.; Table~\ref{tab:decomp}, Fig.~\ref{fig:mechanism}). PPO-IWM de-saturates all 8 joints by 27--38\% (median $|a_j|$: Task $1.000$, IWM $0.624$--$0.723$) and decouples control cost from instantaneous FAC ($r\!=\!0.028$ vs Task $r\!=\!-0.127$, $p\!=\!3.3{\times}10^{-55}$) - the mechanistic signature of interoceptive efficiency. Gradient attribution confirms causality: $\|\nabla_a\hat{\mathrm{FAC}}_h\|$ scales $3.2\times$ at FAC$\!\to\!0.1$ vs FAC$\!\approx\!0.9$ (Pearson $r\!=\!-0.98$; Fig.~\ref{fig:gradient_attribution}); within-episode torque injection reduces mean $|a|$ by 83.1\% ($p\!=\!3.0{\times}10^{-21}$; Appendix~\ref{app:intervention_experiment}).
 
-\begin{figure}[t]
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.99\linewidth]{figures/fig7_reward_decomposition.pdf}
 \caption{\textbf{Mechanism: torque-efficiency, not speed (all 4 methods).}
@@ -268,18 +269,7 @@ indistinguishable from Task ($p\!=\!1.00$, n.s.).
 \label{fig:mechanism}
 \end{figure}
 
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.99\linewidth]{figures/b_results.png}
-\caption{\textbf{Results overview across all four environments and baselines.}
-PPO-IWM achieves zero collapse and Pareto-dominates all baselines on FeverAnt (primary claim), while maintaining FAC advantages on WoundWalker and NumbArm.
-ThermalHopper's unobservable landing-impact pathway eliminates the IWM advantage, validating the falsifiable observability criterion, and LSTM-PPO (88\% collapse) confirms that memory without explicit forward body prediction is insufficient.}
-\label{fig:results_overview}
-\end{figure*}
-
-
-\begin{table}[t]
+\begin{table}[h]
 \centering
 \caption{\textbf{FeverAnt main results} (5 seeds, $n\!=\!50$ episodes). \textbf{Bold} = best per column; symbols defined in footnotes.}
 \label{tab:main}
@@ -302,7 +292,36 @@ AIWM (adaptive) & \multicolumn{5}{c}{(perturbation study; see Fig.~\ref{fig:pert
 \footnotetext[3]{CG-IWM: deployment-time governor on frozen PPO-Task ($n\!=\!30$, $\tau\!=\!0.10$); no retraining. IAH\,=\,0 for all baselines.}
 
 
-\begin{table}[t]
+Extended evidence is collected in the appendix: survival comparisons, training curves, and per-joint torque analysis (Appendix~\ref{app:results}); cross-environment per-seed breakdowns with observability scope validation (Table~\ref{tab:multienv}, Appendix~\ref{app:scope}); ablation bar charts and full ablation table (Table~\ref{tab:ablations}, Appendix~\ref{app:ablations}); and checkpoint selection via Pareto-dominance over task reward, FAC, and survival (Appendix~\ref{app:hyperparams}).
+
+\section{Discussion}
+\label{sec:discussion}
+
+\textbf{Efficiency, not speed.}
+The reward decomposition (Table~\ref{tab:decomp}, Figure~\ref{fig:mechanism}) gives a mechanistic answer: \textbf{80.1\% of the 10.7\% task-reward advantage comes from 24.1\% lower control cost} ($p\!=\!4.8{\times}10^{-17}$); velocity is statistically indistinguishable from Task-only ($p\!=\!1.00$, n.s.). Agents trained with the body predictor do not move faster - they move \emph{more efficiently}: the predictive body-cost signal penalises high-torque actions that predict accelerated damage, and the policy internalises this as a preference for lower-magnitude gaits. The FAC advantage compounds over time (2.0\% at step 1000 $\to$ 10.4\% at step 5000), the signature of predictive rather than reactive body regulation.
+
+
+\begin{figure*}[h]
+\centering
+\includegraphics[width=0.99\linewidth]{figures/b_results.png}
+\caption{\textbf{Results overview across all four environments and baselines.}
+PPO-IWM achieves zero collapse and Pareto-dominates all baselines on FeverAnt (primary claim), while maintaining FAC advantages on WoundWalker and NumbArm.
+ThermalHopper's unobservable landing-impact pathway eliminates the IWM advantage, validating the falsifiable observability criterion, and LSTM-PPO (88\% collapse) confirms that memory without explicit forward body prediction is insufficient.}
+\label{fig:results_overview}
+\end{figure*}
+
+\textbf{The stillness trap.}
+Reactive body penalties (PPO-Energy, PPO-Viability) achieve deceptively high surviving-episode FAC (0.931 and 0.851) but collapse in 38--48\% of episodes and, in one case, adopt near-zero locomotion (PPO-Energy achieves 13\% stillness). For a reactive energy penalty $\lambda\|a\|^2$, stillness ($a\!=\!\mathbf{0}$) is a fixed point of the penalty gradient; under IWM shaping the stillness trap is broken by the \emph{task gradient} - not by a FAC cost - because healthy-state FAC predictions are high at $a\!=\!\mathbf{0}$, so only the task reward drives locomotion. The predictive approach achieves 0\% stillness and 0\% collapse while outperforming Task on both FAC and reward: predictive shaping avoids physiological depletion \emph{and} behavioural degeneration simultaneously (see Appendix~\ref{app:discussion} for formal gradient analysis and neuroscience framing).
+
+
+\textbf{Memory versus prediction.}
+LSTM-PPO (256-unit, same interoceptive observations) collapses in \textbf{88\%} of episodes at matched 10M-step budget (5 seeds, $n\!=\!50$), with mean survival of 2629 steps vs.\ 5000 for PPO-IWM. Critically, the recurrent policy produces \textbf{zero advance warning}: no forward-looking body signal, no early-warning output, and no inspectable safety margin - an operator cannot query the robot about its predicted remaining healthy capacity. The explicit forward-body predictor drives 24.1\% lower control cost; memory accumulates history but cannot anticipate energy evolution over the remaining horizon, eventually exhausting the body.
+
+\textbf{Ablations, AIWM, and observability.}
+All four IWM ablations achieve 0\% collapse (FAC $0.569$--$0.595$; Appendix~\ref{app:ablations}). AIWM gear-ratio adaptation yields $+9.4$--$13.9\%$ RMSE reduction (${\sim}12\times$ larger than observable perturbations, $n\!=\!60$; Appendix~\ref{app:discussion}).
+The 379-step IAH at 50\,Hz gives ${\approx}$7.5\,s of supervisory lead time; the IWM also makes the agent's state \emph{auditable} per-step, a proactive signal absent from all reactive and memory-based baselines.
+
+\begin{table}[h]
 \centering
 \caption{\textbf{IWM generalizes gains across environments where collapse is observable.} Key metrics across all four environments; symbols defined in footnotes.}
 \label{tab:summary}
@@ -325,24 +344,6 @@ LSTM-PPO & \multicolumn{2}{c}{0.660 / \textbf{88\% collapse}} & \multicolumn{2}{
 \end{tabular}
 \end{table}
 \noindent\small{$^\dagger$ Surviving eps.\ only (selection bias). \quad $^\ddagger$ ThermalHopper landing-impact unobservable to IWM; validates scope condition.}
-
-Extended evidence is collected in the appendix: survival comparisons, training curves, and per-joint torque analysis (Appendix~\ref{app:results}); cross-environment per-seed breakdowns with observability scope validation (Table~\ref{tab:multienv}, Appendix~\ref{app:scope}); ablation bar charts and full ablation table (Table~\ref{tab:ablations}, Appendix~\ref{app:ablations}); and checkpoint selection via Pareto-dominance over task reward, FAC, and survival (Appendix~\ref{app:hyperparams}).
-
-\section{Discussion}
-\label{sec:discussion}
-
-\textbf{Efficiency, not speed.}
-The reward decomposition (Table~\ref{tab:decomp}, Figure~\ref{fig:mechanism}) gives a mechanistic answer: \textbf{80.1\% of the 10.7\% task-reward advantage comes from 24.1\% lower control cost} ($p\!=\!4.8{\times}10^{-17}$); velocity is statistically indistinguishable from Task-only ($p\!=\!1.00$, n.s.). Agents trained with the body predictor do not move faster - they move \emph{more efficiently}: the predictive body-cost signal penalises high-torque actions that predict accelerated damage, and the policy internalises this as a preference for lower-magnitude gaits. The FAC advantage compounds over time (2.0\% at step 1000 $\to$ 10.4\% at step 5000), the signature of predictive rather than reactive body regulation.
-
-\textbf{The stillness trap.}
-Reactive body penalties (PPO-Energy, PPO-Viability) achieve deceptively high surviving-episode FAC (0.931 and 0.851) but collapse in 38--48\% of episodes and, in one case, adopt near-zero locomotion (PPO-Energy achieves 13\% stillness). For a reactive energy penalty $\lambda\|a\|^2$, stillness ($a\!=\!\mathbf{0}$) is a fixed point of the penalty gradient; under IWM shaping the stillness trap is broken by the \emph{task gradient} - not by a FAC cost - because healthy-state FAC predictions are high at $a\!=\!\mathbf{0}$, so only the task reward drives locomotion. The predictive approach achieves 0\% stillness and 0\% collapse while outperforming Task on both FAC and reward: predictive shaping avoids physiological depletion \emph{and} behavioural degeneration simultaneously (see Appendix~\ref{app:discussion} for formal gradient analysis and neuroscience framing).
-
-\textbf{Memory versus prediction.}
-LSTM-PPO (256-unit, same interoceptive observations) collapses in \textbf{88\%} of episodes at matched 10M-step budget (5 seeds, $n\!=\!50$), with mean survival of 2629 steps vs.\ 5000 for PPO-IWM. Critically, the recurrent policy produces \textbf{zero advance warning}: no forward-looking body signal, no early-warning output, and no inspectable safety margin - an operator cannot query the robot about its predicted remaining healthy capacity. The explicit forward-body predictor drives 24.1\% lower control cost; memory accumulates history but cannot anticipate energy evolution over the remaining horizon, eventually exhausting the body.
-
-\textbf{Ablations, AIWM, and observability.}
-All four IWM ablations achieve 0\% collapse (FAC $0.569$--$0.595$; Appendix~\ref{app:ablations}). AIWM gear-ratio adaptation yields $+9.4$--$13.9\%$ RMSE reduction (${\sim}12\times$ larger than observable perturbations, $n\!=\!60$; Appendix~\ref{app:discussion}).
-The 379-step IAH at 50\,Hz gives ${\approx}$7.5\,s of supervisory lead time; the IWM also makes the agent's state \emph{auditable} per-step, a proactive signal absent from all reactive and memory-based baselines.
 
 \section{Limitations}
 \label{sec:limitations}
