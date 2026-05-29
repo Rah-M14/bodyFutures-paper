@@ -866,8 +866,7 @@ Left: task reward per step.  Right: final body health (FAC).
 All variants achieve 0\% collapse.  Dashed line: PPO-Task baseline.}
 \label{fig:ablation}
 \end{figure}
-% \vspace{-8pt}
-
+\vspace{-8pt}
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_ablation_curves.pdf}
@@ -884,7 +883,7 @@ IWM framework across component configurations.
 PPO-IWM/Task: 5 seeds $\times$ 10 episodes.  Ablations: 2 seeds $\times$ 5 episodes.}
 \label{fig:ablationcurves}
 \end{figure}
-
+\vspace{-8pt}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.90\linewidth]{figures/fig_iah_action_response.pdf}
@@ -896,7 +895,7 @@ PPO-IWM reduces by $4.2\%\pm0.6\%$; PPO-Task shows $-0.5\%\pm0.3\%$ (no change).
 The IWM policy acts on its predictive warning rather than waiting for physical collapse to manifest.}
 \label{fig:actionresponse}
 \end{figure}
-
+\vspace{-8pt}
 \begin{table}[H]
 \centering
 \caption{Ablation study on FeverAnt.  Ablation variants: 2 seeds $\times$ 5 episodes each (10 episodes total), all at 10M steps.
@@ -1075,7 +1074,7 @@ This design is intentional: IWM coverage-gated rollout collection requires trans
 
 \section{Gear-Ratio Hidden Drift: AIWM Advantage Visualisation}
 \label{app:gear_ratio}
-
+\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig_aiwm_gear_ratio.pdf}
@@ -1086,7 +1085,7 @@ This design is intentional: IWM coverage-gated rollout collection requires trans
 
 \section{Perturbation Observability Taxonomy: Mechanism-Depth Hierarchy}
 \label{app:perturbation_taxonomy}
-
+\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig_perturbation_taxonomy.pdf}
@@ -1096,7 +1095,7 @@ This design is intentional: IWM coverage-gated rollout collection requires trans
 
 \section{Safety Certificate Query: Per-Step Predicted FAC}
 \label{app:safety_cert}
-
+\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig_safety_certificate.pdf}
@@ -1106,7 +1105,7 @@ This design is intentional: IWM coverage-gated rollout collection requires trans
 
 \section{Intervention Experiment: Causal Evidence for IWM-Driven Torque Reduction}
 \label{app:intervention_experiment}
-
+\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.92\linewidth]{figures/fig_intervention.pdf}
@@ -1116,7 +1115,7 @@ This design is intentional: IWM coverage-gated rollout collection requires trans
 
 \section{Failure Mode Gallery}
 \label{app:failure_mode_gallery}
-
+\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.99\linewidth]{figures/fig_failure_mode_gallery.pdf}
@@ -1126,7 +1125,7 @@ This design is intentional: IWM coverage-gated rollout collection requires trans
 
 \section{FAC Trajectory Heat Map}
 \label{app:fac_heatmap}
-
+\vspace{-\baselineskip}
 The FAC trajectory heat map (Figure~\ref{fig:fac_heatmap_q}) visualises per-episode body health across the full 5000-step horizon. Each row is one episode; each column is one timestep. Colour encodes FAC: green ($\approx$1.0) = healthy, red ($\approx$0) = depleted. Episodes are sorted by final FAC (best to worst, top to bottom). PPO-IWM episodes cluster at the top (high, sustained FAC); PPO-Task episodes show monotone depletion; reactive baselines exhibit sharp mid-episode collapses. The IWM uniqueness is structurally visible: no other method achieves uniformly high FAC rows across all 50 episodes.
 
 \begin{figure}[H]
@@ -1169,9 +1168,10 @@ NumbArm & Manipulator & $w_N{=}0.55,\,w_D{=}0.25$ & - & $w_E{=}0.15,\,w_L{=}0.05
 \begin{minipage}{\linewidth}\raggedright\footnotesize $^\|$ ThermalHopper has a 4th FAC term ($+0.10\times$ landing load); since landing load is not in the body-state observation, the IWM sets it to zero and the fac-delta correction absorbs the residual.\end{minipage}
 \end{table}
 
+\vspace{-6pt}
 \subsection{FAC Weight Sensitivity}
 \label{app:fac_sensitivity}
-
+\vspace{-\baselineskip}
 A natural concern is whether the IWM advantage on FAC is an artifact of the specific weight vector chosen. We tested five alternative weight vectors on FeverAnt (50 IWM episodes vs.\ 50 Task episodes, Mann-Whitney~U, one-sided): damage-dominant ($w_D\!=\!0.70, w_T\!=\!0.15, w_E\!=\!0.15$), temperature-dominant ($w_T\!=\!0.70$), energy-dominant ($w_E\!=\!0.70$), uniform ($w_D\!=\!w_T\!=\!w_E\!=\!0.33$), and canonical ($w_D\!=\!0.45$). \textbf{IWM $>$ Task ordering is preserved across all five weight vectors} ($p\!=\!3.5\!\times\!10^{-18}$ each). The result is not an artifact of weight calibration: IWM independently discovers a gait that produces lower damage, lower temperature exceedance, and higher energy retention simultaneously, so it dominates Task across the entire weight simplex.
 
 \vspace{-6pt}
@@ -1196,7 +1196,7 @@ For PPO-Energy ($n\!=\!159{,}356$ step observations at $k\!=\!100$; 5 seeds): $k
 
 \section{Cross-Morphology Extensions}
 \label{app:planned_extensions}
-
+\vspace{-\baselineskip}
 \begin{table}[H]
 \centering
 \caption{Status of IWM experiments.  FeverAnt is complete (primary claim);
