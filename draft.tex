@@ -854,12 +854,10 @@ penalties alone cause instability; IWM maintains 5000-step survival throughout.}
 \label{fig:training}
 \end{figure}
 
-
-\vspace{-4pt}
 \section{Ablation Studies}
 \label{app:ablations}
 \vspace{-\baselineskip}
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.95\linewidth]{figures/fig5_ablation.pdf}
 \caption{\textbf{Ablation study on FeverAnt.}  All ablation variants trained to 10M steps (2 seeds);
@@ -868,8 +866,9 @@ Left: task reward per step.  Right: final body health (FAC).
 All variants achieve 0\% collapse.  Dashed line: PPO-Task baseline.}
 \label{fig:ablation}
 \end{figure}
-\vspace{-8pt}
-\begin{figure}[H]
+% \vspace{-8pt}
+
+\begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_ablation_curves.pdf}
 \caption{\textbf{Ablation learning curves on FeverAnt V2 (0--10M training steps).}
