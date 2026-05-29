@@ -313,8 +313,7 @@ Extended evidence: survival comparisons, training curves, and per-joint torque a
 \section{Discussion}
 \label{sec:discussion}
 
-Self-preservation and task performance are not in conflict when the agent can predict rather than react --- this is the single finding that unifies the three experimental questions above.
-IWM does not trade efficiency for safety; it discovers efficiency \emph{because of} the pressure to preserve the body.
+Self-preservation and task performance are not in conflict when the agent can predict rather than react: IWM does not trade efficiency for safety, it discovers efficiency \emph{because of} the pressure to preserve the body.
 
 \textbf{Efficiency, not speed.}
 Why does predicting body health produce a more efficient gait without any explicit efficiency objective?
@@ -331,6 +330,8 @@ Allostatic regulation in biological systems predicts metabolic cost before fatig
 
 \textbf{Memory versus prediction.}
 Memory alone is insufficient for body preservation: LSTM-PPO (256-unit LSTM, same interoceptive observations as Task) survives only 2629 steps on average --- 46\% less than PPO-IWM's 5000 --- and produces \textbf{zero advance warning} despite having access to the full episode history. No forward-looking body signal, no inspectable safety margin: an operator cannot query the robot about its predicted remaining healthy capacity. The failure is architectural: memory accumulates past state but cannot project it forward into the future body trajectory, so the policy exhausts the body without warning.
+
+The IWM makes this distinction concrete: $\|\nabla_a\hat{\mathrm{FAC}}_h\|$ scales $3.2\times$ at FAC$\!\to\!0.1$ vs.\ FAC$\!\approx\!0.9$ (Pearson $r\!=\!-0.98$; Fig.~\ref{fig:gradient_attribution}), a body-condition-sensitive action pressure absent by construction from any architecture without a forward body predictor.
 
 \textbf{Ablations, AIWM, and observability.}
 All IWM ablations achieve 0\% collapse (FAC $0.569$--$0.595$); AIWM yields $+9.4$--$13.9\%$ RMSE reduction under gear-ratio drift (Appendix~\ref{app:ablations},\ref{app:discussion}).
