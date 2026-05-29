@@ -58,25 +58,13 @@ The Interoceptive World Model (IWM) predicts future FAC loss across four horizon
 
 
 \begin{abstract}
-Robots degrade not from external hazards but from their own actions: unconstrained actuator use
-erodes joints, overheats motors, and depletes energy stores, causing future control authority to
-collapse irreversibly. Existing safe-RL methods guard against external constraint violations and
-react only when degradation is already catastrophic; no prior method produces a deployable,
-forward-looking signal of how far a robot is from losing the ability to act at all. We introduce the
-\textbf{Interoceptive World Model (IWM)}: a neural predictor trained jointly with a control policy
-that forecasts future body-capacity loss across four horizons (1, 5, 25, 100 steps) and reshapes
-behavior preemptively. An \textbf{Adaptive IWM (AIWM)} extends this with online body-model
-personalization at deployment without retraining.
+Robots degrade not from external hazards but from their own actions: unconstrained actuator use erodes joints, overheats motors, and depletes energy stores, causing future control authority to collapse irreversibly. Existing safe-RL methods guard against external constraint violations and react only when degradation is already catastrophic; no prior method produces a deployable, forward-looking signal of how far a robot is from losing the ability to act at all. We introduce the \textbf{Interoceptive World Model (IWM)}: a neural predictor trained jointly with a control policy that forecasts future body-capacity loss across four horizons (1, 5, 25, 100 steps) and reshapes behavior preemptively. An \textbf{Adaptive IWM (AIWM)} extends this with online body-model personalization at deployment without retraining.
 
-Evaluated across BodyFutures-Bench (four MuJoCo environments with latent body dynamics), IWM
-achieves \textbf{zero collapse} across all environments (versus 38--88\% for all baselines), a
-\textbf{379-step advance warning} of impending failure (Interoceptive Anticipation Horizon;
-IAH\,=\,0 for every reactive and recurrent baseline), and \textbf{10.7\% higher task reward},
-achieved entirely through emergent torque efficiency with no speed increase. We release
-BodyFutures-Bench, a deployable IAH safety metric, and all checkpoints.
+Evaluated across BodyFutures-Bench (four MuJoCo environments with latent body dynamics), IWM achieves \textbf{zero collapse} across all environments (versus 38--88\% for all baselines), a \textbf{379-step advance warning} of impending failure (Interoceptive Anticipation Horizon; IAH\,=\,0 for every reactive and recurrent baseline), and \textbf{10.7\% higher task reward}, achieved entirely through emergent torque efficiency with no speed increase. We release BodyFutures-Bench, a deployable IAH safety metric, and all checkpoints.
 \end{abstract}
 
-\keywords{robot learning, world models, robot safety}
+\keywords{robot body health, interoceptive world models, predictive safety, safe reinforcement learning, embodied autonomy}
+
 
 \section{Introduction}
 
@@ -167,7 +155,7 @@ Each environment couples temperature-like stress, damage, and energy with action
 \section{Interoceptive World Models}
 \label{sec:method}
 
-{\textbf{Intuition.} A robot that can predict ``if I apply this much torque now, my joints will overheat in 100 steps'' can preemptively choose a gentler gait, one that completes the task while preserving the body. This is fundamentally different from reacting to damage after it is observed, and different from memorizing past states without a forward model. Our approach builds a neural predictor of future body health, trains it on data collected specifically from near-collapse situations, and uses its outputs as a training signal that shapes the policy before degradation becomes irreversible. An Interoceptive World Model (IWM) predicts future internal consequences of actions. For each transition, the model receives the external observation, the action taken, and any available body signals. It outputs a prediction of the next body state and future body capacity at multiple time horizons, giving the agent a window into how its current behavior will affect its physical health many steps ahead:
+{\textbf{Intuition.} A robot that can predict ``if I apply \textit{x} $Nm$ torque at the current timestep, my joints will overheat in 100 steps'' can preemptively choose a gentler gait, one that completes the task while preserving the body. This is fundamentally different from reacting to damage after it is observed, and different from memorizing past states without a forward model. Our approach builds a neural predictor of future body health, trains it on data collected specifically from near-collapse situations, and uses its outputs as a training signal that shapes the policy before degradation becomes irreversible. An Interoceptive World Model (IWM) predicts future internal consequences of actions. For each transition, the model receives the external observation, the action taken, and any available body signals. It outputs a prediction of the next body state and future body capacity at multiple time horizons, giving the agent a window into how its current behavior will affect its physical health many steps ahead:
 \begin{equation}
     f_\theta(\obs_t,\act_t,\tilde{\body}_t)
     \rightarrow
