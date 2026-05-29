@@ -43,15 +43,6 @@
 \begin{document}
 \maketitle
 
-\begin{figure*}[h]
-\centering
-\includegraphics[width=0.99\linewidth]{figures/Overview.png}
-\caption{\textbf{Overview: problem, method, and results.}
-A task-only agent depletes its body capacity (FAC) through unconstrained actuator use and collapses, detectable only at the moment of failure.
-The Interoceptive World Model (IWM) predicts future FAC loss across four horizons, shapes the policy preemptively, and achieves zero collapse, a 379-step advance warning, and 10.7\% higher task reward, simultaneously, across all evaluated environments.}
-\label{fig:story}
-\end{figure*}
-
 \begin{abstract}
 Robots degrade not from external hazards but from their own actions: unconstrained actuator use
 erodes joints, overheats motors, and depletes energy stores, causing future control authority to
@@ -66,12 +57,21 @@ personalization at deployment without retraining.
 Evaluated across BodyFutures-Bench (four MuJoCo environments with latent body dynamics), IWM
 achieves \textbf{zero collapse} across all environments (versus 38--88\% for all baselines), a
 \textbf{379-step advance warning} of impending failure (Interoceptive Anticipation Horizon;
-IAH\,=\,0 for every reactive and recurrent baseline), and \textbf{10.7\% higher task reward},
+IAH\,=\,0 for every reactive and recurrent baseline), and \textbf{10.7\% higher task reward} ---
 achieved entirely through emergent torque efficiency with no speed increase. We release
 BodyFutures-Bench, a deployable IAH safety metric, and all checkpoints.
 \end{abstract}
 
 \keywords{robot learning, world models, robot safety}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.99\linewidth]{figures/Overview.png}
+\caption{\textbf{Overview: problem, method, and results.}
+A task-only agent depletes its body capacity (FAC) through unconstrained actuator use and collapses — detectable only at the moment of failure.
+The Interoceptive World Model (IWM) predicts future FAC loss across four horizons, shapes the policy preemptively, and achieves zero collapse, a 379-step advance warning, and 10.7\% higher task reward — simultaneously — across all evaluated environments.}
+\label{fig:story}
+\end{figure*}
 
 \section{Introduction}
 
@@ -88,13 +88,13 @@ A contributions checklist with evidence pointers appears in Table~\ref{tab:contr
 \section{Related Work}
 \label{sec:related}
 
-\textbf{Safe RL.}~Constrained policy optimization~\citep{achiam2017constrained}, Safety Gym~\citep{ray2019safetygym}, Safety Gymnasium~\citep{ji2023safetygymnasium}, and SafeDreamer~\citep{huang2024safedreamer} address \emph{external} hazards via Lagrangian penalties. BodyFutures differs: the hazard is \emph{endogenous} (self-induced by the agent's own torques), its consequence is irreversible loss of future control authority (not a per-step constraint), and IWM's IAH quantifies \emph{how far before collapse} the predictor fires, a signal absent from all safe-RL approaches.
+\textbf{Safe RL.}~Constrained policy optimization~\citep{achiam2017constrained}, Safety Gym~\citep{ray2019safetygym}, Safety Gymnasium~\citep{ji2023safetygymnasium}, and SafeDreamer~\citep{huang2024safedreamer} address \emph{external} hazards via Lagrangian penalties. BodyFutures differs: the hazard is \emph{endogenous} (self-induced by the agent's own torques), its consequence is irreversible loss of future control authority (not a per-step constraint), and IWM's IAH quantifies \emph{how far before collapse} the predictor fires --- a signal absent from all safe-RL approaches.
 
-\textbf{World models.}~Dreamer~\citep{hafner2020dreamer,hafner2023dreamerv3}, TD-MPC2~\citep{hansen2023tdmpc2}, and MBPO~\citep{janner2019mbpo} predict \emph{external} state transitions. IWM instead predicts \emph{internal} body-state trajectories (future FAC, damage, energy) and AIWM updates the predictor online during deployment, personalising interoceptive predictions to the specific robot's degradation trajectory~\citep{seth2013interoceptive}, without retraining the policy.
+\textbf{World models.}~Dreamer~\citep{hafner2020dreamer,hafner2023dreamerv3}, TD-MPC2~\citep{hansen2023tdmpc2}, and MBPO~\citep{janner2019mbpo} predict \emph{external} state transitions. IWM instead predicts \emph{internal} body-state trajectories (future FAC, damage, energy) and AIWM updates the predictor online during deployment --- personalising interoceptive predictions to the specific robot's degradation trajectory~\citep{seth2013interoceptive} --- without retraining the policy.
 
 \textbf{Self-modeling and adaptation.}~Bongard et al.~\citep{bongard2006resilient}, Cully et al.~\citep{cully2015robots}, RMA~\citep{kumar2021rma}, and actuator-network models~\citep{hwangbo2019learning} estimate or compensate for \emph{current} body parameters after damage; IWM predicts \emph{future} body trajectories and IAH measures how far in advance. AIWM borrows EWC~\citep{kirkpatrick2017overcoming} not for multi-task forgetting but for intra-episode online personalisation of interoceptive priors.
 
-\textbf{Interoception and efficiency.}~Homeostatic RL~\citep{keramati2011homeostatic} and empowerment~\citep{klyubin2005empowerment} motivate FAC as retained future action authority. IWM discovers 24.1\% lower control cost as an emergent consequence of body-preservation shaping, not any explicit efficiency objective, breaking the stillness trap that defeats reactive energy penalties. See Appendix~\ref{app:relatedwork} for extended comparisons.
+\textbf{Interoception and efficiency.}~Homeostatic RL~\citep{keramati2011homeostatic} and empowerment~\citep{klyubin2005empowerment} motivate FAC as retained future action authority. IWM discovers 24.1\% lower control cost as an emergent consequence of body-preservation shaping --- not any explicit efficiency objective --- breaking the stillness trap that defeats reactive energy penalties. See Appendix~\ref{app:relatedwork} for extended comparisons.
 
 \section{Formal Problem}
 \label{sec:problem}
@@ -162,8 +162,8 @@ Each environment couples temperature-like stress, damage, and energy with action
 \section{Interoceptive World Models}
 \label{sec:method}
 
-\textbf{Intuition.} A robot that can predict ``if I apply this much torque now, my joints will overheat in 100 steps'' can preemptively choose a gentler gait - one that completes the task while preserving the body. This is fundamentally different from reacting to damage after it is observed, and different from memorizing past states without a forward model. Our approach builds a neural predictor of future body health, trains it on data collected specifically from near-collapse situations, and uses its outputs as a training signal that shapes the policy before degradation becomes irreversible.
-\textbf{Model.} An Interoceptive World Model (IWM) predicts future internal consequences of actions. For each transition, the model receives the external observation, the action taken, and any available body signals. It outputs a prediction of the next body state and future body capacity at multiple time horizons - giving the agent a window into how its current behavior will affect its physical health many steps ahead:
+\textcolor{maroonprimary}{\textbf{Intuition.}} A robot that can predict ``if I apply this much torque now, my joints will overheat in 100 steps'' can preemptively choose a gentler gait - one that completes the task while preserving the body. This is fundamentally different from reacting to damage after it is observed, and different from memorizing past states without a forward model. Our approach builds a neural predictor of future body health, trains it on data collected specifically from near-collapse situations, and uses its outputs as a training signal that shapes the policy before degradation becomes irreversible.
+\textcolor{maroonprimary}{\textbf{Model.}} An Interoceptive World Model (IWM) predicts future internal consequences of actions. For each transition, the model receives the external observation, the action taken, and any available body signals. It outputs a prediction of the next body state and future body capacity at multiple time horizons - giving the agent a window into how its current behavior will affect its physical health many steps ahead:
 \begin{equation}
     f_\theta(\obs_t,\act_t,\tilde{\body}_t)
     \rightarrow
@@ -270,7 +270,7 @@ indistinguishable from Task ($p\!=\!1.00$, n.s.).
 \includegraphics[width=0.99\linewidth]{figures/Results.png}
 \caption{\textbf{Results overview across all four environments and baselines.}
 PPO-IWM achieves zero collapse and Pareto-dominates all baselines on FeverAnt (primary claim), while maintaining FAC advantages on WoundWalker and NumbArm.
-ThermalHopper's unobservable landing-impact pathway eliminates the IWM advantage, validating the falsifiable observability criterion, and LSTM-PPO (88\% collapse) confirms that memory without explicit forward body prediction is insufficient.}
+ThermalHopper's unobservable landing-impact pathway eliminates the IWM advantage — validating the falsifiable observability criterion — and LSTM-PPO (88\% collapse) confirms that memory without explicit forward body prediction is insufficient.}
 \label{fig:results_overview}
 \end{figure*}
 
@@ -294,8 +294,8 @@ AIWM (adaptive) & \multicolumn{5}{c}{(perturbation study; see Fig.~\ref{fig:pert
 \bottomrule
 \end{tabular}}
 \end{table}
-\footnotetext[1]{Surviving eps.\ only (Energy: 26/50, Viability: 31/50), not comparable to IWM/Task (100\% survival).}
-\footnotetext[2]{LSTM: 88\% collapse, IAH\,=\,0; no forward body-prediction signal, memory alone cannot predict future depletion.}
+\footnotetext[1]{Surviving eps.\ only (Energy: 26/50, Viability: 31/50) — not comparable to IWM/Task (100\% survival).}
+\footnotetext[2]{LSTM: 88\% collapse, IAH\,=\,0; no forward body-prediction signal — memory alone cannot predict future depletion.}
 \footnotetext[3]{CG-IWM: deployment-time governor on frozen PPO-Task ($n\!=\!30$, $\tau\!=\!0.10$); no retraining. IAH\,=\,0 for all baselines.}
 
 Cross-environment scope validation: Table~\ref{tab:multienv} (Appendix~\ref{app:scope}).
@@ -340,19 +340,19 @@ LSTM-PPO (256-unit, same interoceptive observations) collapses in \textbf{88\%} 
 
 \textbf{Ablations, AIWM, and observability.}
 All four IWM ablations achieve 0\% collapse (FAC $0.569$--$0.595$; Appendix~\ref{app:ablations}). AIWM gear-ratio adaptation yields $+9.4$--$13.9\%$ RMSE reduction (${\sim}12\times$ larger than observable perturbations, $n\!=\!60$; Appendix~\ref{app:discussion}).
-The 379-step IAH at 50\,Hz gives ${\approx}$7.5\,s of supervisory lead time; the IWM also makes the agent's state \emph{auditable} per-step, a proactive signal absent from all reactive and memory-based baselines.
+The 379-step IAH at 50\,Hz gives ${\approx}$7.5\,s of supervisory lead time; the IWM also makes the agent's state \emph{auditable} per-step --- a proactive signal absent from all reactive and memory-based baselines.
 
 \section{Limitations}
 \label{sec:limitations}
 
 \textbf{Assumptions and hardware.} Degradation constants ($\alpha,\beta,\gamma$) are not calibrated to specific hardware; real-world validation is required before deployment. WoundWalker V2 achieves $+4.7\%$ FAC ($p\!=\!0.04$, $n\!=\!52$) but 96\% IWM collapse: terminal energy depletion dominates both methods; the FAC advantage is body-preservation \emph{within} episodes, independent of survival (Appendix~\ref{app:scope}).
 
-\textbf{Scope conditions.} \emph{Falsifiable criterion}: IWM improves health iff the dominant collapse pathway is interoceptively observable, ThermalHopper degrades FAC by $-19\%$ ($p\!=\!2.4{\times}10^{-8}$; unobservable impact); NumbArm improves FAC by $+3.5\%$ ($p\!=\!2.8{\times}10^{-10}$; observable numbness; Appendix~\ref{app:scope}).
+\textbf{Scope conditions.} \emph{Falsifiable criterion}: IWM improves health iff the dominant collapse pathway is interoceptively observable --- ThermalHopper degrades FAC by $-19\%$ ($p\!=\!2.4{\times}10^{-8}$; unobservable impact); NumbArm improves FAC by $+3.5\%$ ($p\!=\!2.8{\times}10^{-10}$; observable numbness; Appendix~\ref{app:scope}).
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-Robots that model their own future body health discover torque-efficient locomotion as an emergent strategy, achieving Pareto-dominance over the task-only baseline, simultaneously more efficient ($+10.7\%$), healthier ($+10.4\%$ FAC), and zero-collapse, all without any explicit efficiency constraint. IWM is the only method that simultaneously improves task competence ($p\!=\!5.1{\times}10^{-8}$), body health ($p\!=\!2.8{\times}10^{-17}$), and achieves zero collapse with a deployable 379-step advance warning absent from all baselines. Cross-morphology evaluation confirms the falsifiable scope condition: NumbArm ($+3.5\%$ FAC); ThermalHopper ($-19\%$ FAC). We release BodyFutures-Bench with all checkpoints and invite adoption of IAH as a standard diagnostic for long-horizon robot health.
+Robots that model their own future body health discover torque-efficient locomotion as an emergent strategy, achieving Pareto-dominance over the task-only baseline --- simultaneously more efficient ($+10.7\%$), healthier ($+10.4\%$ FAC), and zero-collapse --- all without any explicit efficiency constraint. IWM is the only method that simultaneously improves task competence ($p\!=\!5.1{\times}10^{-8}$), body health ($p\!=\!2.8{\times}10^{-17}$), and achieves zero collapse with a deployable 379-step advance warning absent from all baselines. Cross-morphology evaluation confirms the falsifiable scope condition: NumbArm ($+3.5\%$ FAC); ThermalHopper ($-19\%$ FAC). We release BodyFutures-Bench with all checkpoints and invite adoption of IAH as a standard diagnostic for long-horizon robot health.
 
 \bibliography{references}
 
@@ -481,7 +481,7 @@ When FAC$\,\to\,0.1$, the IWM's predicted-FAC gradient w.r.t.\ action is $3.2\ti
 The causal signature that separates prediction from memory: LSTM cannot compute $\nabla_a \hat{\mathrm{FAC}}$; IWM's differentiable predictor produces a graded, body-conditioned warning.}
 \label{fig:gradient_attribution}
 \end{figure}
-
+\vspace{-10pt}
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_torque_violin.pdf}
@@ -551,10 +551,10 @@ Domain randomisation~\citep{tobin2017domain}, sim-to-real dynamics transfer~\cit
 \textbf{Simulation and tooling.}
 All BodyFutures experiments use MuJoCo~\citep{todorov2012mujoco} for physics simulation and Gymnasium~\citep{towers2024gymnasium} for the environment API, enabling full reproducibility from the open-source release. Cully et al.'s Quality-Diversity adaptation~\citep{cully2015robots} and Young et al.'s robot vitals~\citep{young2022robotvitals} further contextualise the broader robot-health monitoring landscape that BodyFutures-Bench is designed to serve.
 
+\vspace{-4pt}
 \section{Scope Conditions and Cross-Morphology Analysis}
 \label{app:scope}
-\vspace{-0.4\baselineskip}
-
+\vspace{-0.8\baselineskip}
 This appendix provides the complete cross-morphology evaluation across all four BodyFutures environments, with per-seed breakdowns and detailed analysis of the observability scope condition.
 
 \textbf{Scope condition formalization.}
@@ -573,6 +573,7 @@ Both PPO-IWM and PPO-Task deplete energy at nearly identical rates, reaching $E_
 Despite the shared energy collapse, IWM maintains a higher mean FAC within the pre-collapse window ($+4.7\%$ FAC advantage, $p\!=\!0.04$), confirming that body-preservation and survival (energy exhaustion) are mechanistically independent: IWM preserves actuator authority \emph{while alive} even though terminal energy depletion is unavoidable for both methods.}
 \label{fig:ww_energy}
 \end{figure}
+\vspace{-6pt}
 
 \textbf{NumbArm per-seed breakdown.}
 PPO-IWM seed FAC values: $\{0.938, 0.945, 0.960, 0.965, 0.955\}$ (seeds 0--4). PPO-Task seed FAC values: $\{0.942, 0.835, 0.944, 0.939, 0.942\}$ (seeds 0--4). Task seed 1 is a clear outlier: FAC~$=\!0.835$, mean numbness~$=\!0.283$ (vs.\ $\approx\!0.100$ for other seeds), indicating the policy discovered a high-torque gait that rapidly depletes numbness. IWM seed 1 achieves FAC~$=\!0.945$, demonstrating that predictive shaping prevents the high-numbness gait discovery. IWM inter-seed FAC variance ($\sigma\!=\!0.011$) is $4.5\times$ lower than Task ($\sigma\!=\!0.050$), confirming that body-state shaping regularises outcomes across random policy initializations.
@@ -589,6 +590,7 @@ IWM achieves $\mathbf{0.953\pm0.012}$ vs.\ Task $0.920\pm0.059$ ($+3.5\%$; $p\!=
 Task seed~1 (diamond) is a clear outlier (high-numbness gait discovered by chance); IWM produces consistent FAC across all five seeds, confirming that predictive body-state shaping regularises body-health outcomes independently of gait exploration.}
 \label{fig:numbarm}
 \end{figure}
+\vspace{-6pt}
 
 \textbf{ThermalHopper component analysis.}
 The ThermalHopper FAC formula is $\mathrm{FAC} = 1 - (0.40D + 0.25T_\mathrm{norm} + 0.25(1-E) + 0.10L_\mathrm{impact})$, where $L_\mathrm{impact}$ is the landing-impact load. In the evaluation data ($n\!=\!10$ eps per seed, 3 seeds each): Energy contribution ($0.25(1-E)$): IWM $0.250$, Task $0.250$ - identical, confirming both methods collapse from energy exhaustion. Damage contribution ($0.40D$): IWM $0.006$, Task $0.010$ - negligible difference. Thermal contribution ($0.25T_\mathrm{norm}$): $\approx\!0$ for both (both below safe temperature threshold). Landing-impact contribution ($0.10L$): IWM $0.238$, Task $0.141$ - IWM $+69\%$ larger. The residual impact contribution accounts for the entire FAC deficit difference: IWM's body-shaping steers toward gaits with heavier landing forces because the impact pathway is absent from the interoceptive state. This validates the falsifiable scope condition and provides a concrete mechanism: coverage-gated shaping on observable signals (damage, temperature, energy) inadvertently selects for \emph{higher-impact} gaits when a competing FAC-relevant pathway is unobservable.
@@ -605,6 +607,7 @@ The critical difference: landing-impact contribution (blue, \emph{unobservable} 
 IWM's body-shaping inadvertently steers toward higher-impact gaits because the impact pathway is absent from the interoceptive state vector, validating the falsifiable observability scope condition.}
 \label{fig:thermalhopper_breakdown}
 \end{figure}
+\vspace{-6pt}
 
 \textbf{CG-IWM scope conditions.}
 CG-IWM effectiveness reveals four scope conditions, each with a concrete mechanism:
@@ -651,7 +654,7 @@ NA PPO-Task & 10M & 5000 & $-0.525\pm0.457$ & $0.920\pm0.059$ & 0 & 0.00 \\
 NA PPO-IWM & 10M & 5000 & $\mathbf{-0.548\pm0.397}$ & $\mathbf{0.953\pm0.012}$ & 0 & 0.00 \\
 \bottomrule
 \end{tabular}}
-\raggedright\footnotesize{$\ddagger$ V1: no coverage-gating, no IWM advantage; coverage-gating is essential (see Appendix~\ref{app:architecture}). ThermalHopper landing-impact term is unobservable to the IWM (not in the body-state vector), eliminating the FAC advantage and validating the falsifiable observability criterion. WW~V2: bimodal Task seeds 3--4 slow gait ($\sigma_\mathrm{surv}\!=\!997$) vs IWM consistent ($\sigma\!=\!194$). Full per-seed breakdowns in Appendix~\ref{app:scope}.}
+\raggedright\footnotesize{$\ddagger$ V1: no coverage-gating — no IWM advantage; coverage-gating is essential (see Appendix~\ref{app:architecture}). ThermalHopper landing-impact term is unobservable to the IWM (not in the body-state vector), eliminating the FAC advantage and validating the falsifiable observability criterion. WW~V2: bimodal Task seeds 3--4 slow gait ($\sigma_\mathrm{surv}\!=\!997$) vs IWM consistent ($\sigma\!=\!194$). Full per-seed breakdowns in Appendix~\ref{app:scope}.}
 \end{table}
 
 \section{Discussion: Extended Analysis}
@@ -690,13 +693,12 @@ Thermal environment shift & Partial (ambient $T_\mathrm{amb}$ not in state; body
 Battery degradation & Yes (energy $\downarrow$ in state) & $\times$ & \emph{Predicted null} (untested) \\
 \bottomrule
 \end{tabular}}
-\raggedright\footnotesize{The critical condition: AIWM advantage requires that the perturbation
-changes the body's force-action mapping without immediately appearing in the interoceptive
-state vector.  Observable-state perturbations (motor damage, actuator weakness, covert wear) yield null results.
-Gear-ratio shift (MuJoCo \texttt{actuator\_gear} modification) confirms the prediction across all four gear settings: $+9.4\%$ to $+13.9\%$ AIWM advantage (n=60 total; monotonically increasing with torque-reduction severity; mean $+11.4\%$).
-Joint friction increase and thermal environment shift both yield confirmed but small AIWM advantage ($+0.87 \pm 0.11\%$ and $+0.90 \pm 0.15\%$ respectively; ${\sim}12{\times}$ smaller than gear-ratio shift); friction shows no severity trend ($0.849$--$0.875\%$) while thermal shows a slight upward trend ($0.856$--$0.938\%$) with temperature.
-This graduated response reveals a \emph{mechanism-depth hierarchy}: \emph{actuator-level} changes disrupt force-output dynamics most directly, yielding the largest AIWM benefit ($+9.4\%$ to $+13.9\%$); \emph{contact-level} and \emph{environmental} changes affect body dynamics more indirectly, yielding smaller but consistently positive adaptation gains ($+0.87\%$ to $+0.90\%$).}
 \end{table}
+
+\smallskip
+\noindent Table~\ref{tab:observability} operationalises the observability criterion: AIWM advantage requires that the perturbation changes the body's force-action mapping without appearing in the interoceptive state vector. Observable-state perturbations (motor damage, actuator weakness, covert wear) yield null results because the static IWM already tracks the relevant signal. Gear-ratio shift confirms the prediction across all four severity settings: $+9.4\%$ to $+13.9\%$ AIWM advantage ($n\!=\!60$; monotonically increasing with torque-reduction severity; mean $+11.4\%$).
+
+\noindent Joint friction increase and thermal environment shift both yield confirmed but small AIWM advantages ($+0.87\!\pm\!0.11\%$ and $+0.90\!\pm\!0.15\%$ respectively; ${\sim}12{\times}$ smaller than gear-ratio shift). This graduated response reveals a \emph{mechanism-depth hierarchy}: actuator-level changes yield the largest AIWM benefit; contact-level and environmental changes affect body dynamics more indirectly, yielding smaller but consistently positive adaptation gains.
 
 \begin{figure}[H]
 \centering
@@ -722,7 +724,7 @@ so static IWM cannot track it without retraining, validating the observability t
 The training pipeline proceeds in five sequential phases.
 \textbf{(1)~Coverage-gated rollout collection} ensures that near-collapse states (FAC\,$<\!0.5$) represent $\geq\!2\%$ of the replay buffer before IWM updates fire; if gates fail, targeted stress data is appended (15.3\% low-FAC coverage achieved on FeverAnt).
 \textbf{(2)~Multi-horizon IWM training} fits FAC predictions at horizons $h \in \{1,5,25,100\}$ on the coverage-gated dataset (RMSE\,$=\!0.0065$ on FeverAnt held-out set).
-\textbf{(3)~PPO training with IWM-shaped reward}, the IWM is frozen; only the policy parameters are updated.
+\textbf{(3)~PPO training with IWM-shaped reward} — the IWM is frozen; only the policy parameters are updated.
 \textbf{(4)~Post-hoc evaluation} at 50 episodes $\times$ 5 seeds (FAC, IAH, collapse rate).
 \textbf{(5)~Optional AIWM deployment adaptation} via EWC-regularised online gradient updates for hidden dynamics shifts.
 
@@ -764,15 +766,15 @@ If $R_\Theta(a_t^*) \le \tau$, the original policy action passes through unchang
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.40\linewidth]{figures/snapshot_feverant.png}\hfill
-\includegraphics[width=0.18\linewidth]{figures/snapshot_woundwalker.png}\hfill
-\includegraphics[width=0.18\linewidth]{figures/snapshot_thermalhopper.png}\hfill
-\includegraphics[width=0.18\linewidth]{figures/snapshot_numbarm.png}
+\includegraphics[width=0.235\linewidth]{figures/snapshot_feverant_single.png}\hfill
+\includegraphics[width=0.235\linewidth]{figures/snapshot_woundwalker.png}\hfill
+\includegraphics[width=0.235\linewidth]{figures/snapshot_thermalhopper.png}\hfill
+\includegraphics[width=0.235\linewidth]{figures/snapshot_numbarm.png}
 \caption{\textbf{BodyFutures-Bench environment snapshots} (trained PPO-Task agents, 10M steps).
-\emph{Left to right}: (a)~\textbf{FeverAnt} -8-DOF ant with servo overheating; torque-accumulation raises joint temperature, reducing actuator authority.
-(b)~\textbf{WoundWalker} - bipedal walker with wound-induced energy bleeding; falls deepen wounds and drain energy reserves.
-(c)~\textbf{ThermalHopper} -1-DOF hopper with landing-impact thermal stress; collapse pathway is unobservable by interoception (falsifiable scope condition).
-(d)~\textbf{NumbArm} -7-DOF manipulation arm with progressive proprioceptive numbness; continuous operation accumulates numbness until control authority is lost.
+\emph{Left to right}: (a)~\textbf{FeverAnt} -- 8-DOF ant with servo overheating; torque-accumulation raises joint temperature, reducing actuator authority.
+(b)~\textbf{WoundWalker} -- bipedal walker with wound-induced energy bleeding; falls deepen wounds and drain energy reserves.
+(c)~\textbf{ThermalHopper} -- 1-DOF hopper with landing-impact thermal stress; collapse pathway is unobservable by interoception (falsifiable scope condition).
+(d)~\textbf{NumbArm} -- 7-DOF manipulation arm with progressive proprioceptive numbness; continuous operation accumulates numbness until control authority is lost.
 All environments share the FAC/IAH/collapse diagnostic contract.}
 \label{fig:env_snapshots}
 \end{figure}
@@ -809,9 +811,10 @@ where $L_t$ is an impact or manipulation load and coefficients are environment-s
 Thus a damaged body has reduced future ability to affect the environment - the action interface is nonstationary.
 
 
+\vspace{-4pt}
 \section{Training Dynamics}
 \label{app:training}
-
+\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.99\linewidth]{figures/fig_fac_heatmap.pdf}
@@ -825,7 +828,7 @@ Episodes sorted by final FAC (best $\to$ worst, top to bottom).
 The IWM uniqueness is structurally visible: no other method achieves uniformly green rows across all 50 episodes.}
 \label{fig:fac_heatmap}
 \end{figure}
-
+\vspace{-8pt}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\linewidth]{figures/fig_training_progress.pdf}
@@ -841,10 +844,10 @@ penalties alone cause instability; IWM maintains 5000-step survival throughout.}
 \end{figure}
 
 
+\vspace{-4pt}
 \section{Ablation Studies}
 \label{app:ablations}
-\vspace{-0.4\baselineskip}
-
+\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\linewidth]{figures/fig5_ablation.pdf}
@@ -854,7 +857,7 @@ Left: task reward per step.  Right: final body health (FAC).
 All variants achieve 0\% collapse.  Dashed line: PPO-Task baseline.}
 \label{fig:ablation}
 \end{figure}
-
+\vspace{-8pt}
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_ablation_curves.pdf}
@@ -908,9 +911,10 @@ PPO-Task (baseline)             & 10M & $0.814 \pm 0.009$ & $0.535 \pm 0.002$ & 
 \end{table}
 
 
+\vspace{-4pt}
 \section{Method Positioning Table}
 \label{app:positioning}
-
+\vspace{-\baselineskip}
 \begin{table}[H]
 \centering
 \caption{Positioning of BodyFutures-IWM relative to key related works.
@@ -941,12 +945,16 @@ PPO-Energy / PPO-Viability (baselines) & \checkmark & $\times$ & $\times$ & $\ti
 \end{tabular}}
 \end{table}
 
-\noindent Table~\ref{tab:positioning} highlights that IWM is the only method that simultaneously satisfies all five criteria: endogenous degradation, multi-horizon interoceptive prediction, a deployable IAH safety metric, online adaptation, and a dedicated benchmark suite. O'Keeffe et al.\ predict actuator degradation in robot swarms but do not define an anticipation-horizon metric and operate at multi-mission granularity rather than per-timestep intra-episode prediction.
+\smallskip
+\noindent As Table~\ref{tab:positioning} shows, IWM is the only method that simultaneously satisfies all five criteria: endogenous body degradation from the agent's own actions, multi-horizon interoceptive prediction of future FAC, a deployable anticipation-horizon safety metric (IAH), online body-model adaptation at deployment, and a dedicated benchmark suite with a shared diagnostic contract.
+
+No prior method combines \emph{all} five. O'Keeffe et al.\ predict actuator degradation in robot swarms but do not define an anticipation-horizon metric and operate at multi-mission (hours-scale) granularity rather than per-timestep intra-episode prediction. SafeDreamer provides imagined future constraint estimates but targets external hazards, not endogenous body degradation. RMA and similar adaptation approaches estimate current body parameters rather than forecasting future body-state trajectories. Table~\ref{tab:positioning} makes these distinctions precise and falsifiable.
 
 \section{Hyperparameters}
 \label{app:hyperparams}
 
 \subsection*{PPO Training (all FeverAnt variants)}
+\vspace{-4pt}
 \begin{table}[H]
 \centering
 \caption{PPO hyperparameters (stable-baselines3).}
@@ -973,7 +981,9 @@ Device & CUDA (RTX 4090) \\
 \end{tabular}
 \end{table}
 
+\vspace{-4pt}
 \subsection*{IWM Architecture and Training}
+\vspace{-4pt}
 \begin{table}[H]
 \centering
 \caption{IWM architecture and training hyperparameters.}
@@ -997,7 +1007,9 @@ Val split & 20\% \\
 \end{tabular}
 \end{table}
 
+\vspace{-4pt}
 \subsection*{IWM Reward Shaping}
+\vspace{-4pt}
 \begin{table}[H]
 \centering
 \caption{IWM-shaped reward parameters (ppo\_iwm\_v2.yaml).}
@@ -1018,7 +1030,9 @@ AIWM update frequency $\Delta$ & 100 steps \\
 \end{tabular}
 \end{table}
 
+\vspace{-4pt}
 \subsection*{FeverAnt Environment}
+\vspace{-4pt}
 \begin{table}[H]
 \centering
 \caption{FeverAnt V2 environment parameters.}
@@ -1076,7 +1090,7 @@ This design is intentional: IWM coverage-gated rollout collection requires trans
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig_safety_certificate.pdf}
-\caption{\textbf{IWM provides a queryable per-step safety certificate; PPO-Task has no remaining-capacity estimate.} Calibrated from controlled injection experiments (FeverAnt, damage pulse $= 0.50$, $n\!=\!30$). \textit{Blue solid}: PPO-IWM actual FAC (stays near 0.71 post-injection). \textit{Blue dashed}: IWM predicted FAC, drops to ${\approx}\!0.17$ immediately after the damage pulse is injected (vertical dashed line), correctly predicting danger (measured mean error $=\!0.504$ relative to actual FAC ${\approx}\!0.67$). \textit{Red solid}: PPO-Task actual FAC (similar trajectory; also survives). \textit{Red dashed (flat at zero)}: PPO-Task carries no queryable predicted-FAC signal. The dot-dashed vertical line marks the IWM safety query firing (predicted FAC drops below the 0.5 alert threshold), providing an early warning that enables operator intervention or graceful shutdown. Both methods survive, but only IWM provides this auditable certificate. IAH\,$=\!0$ for PPO-Task because it outputs actions, not FAC predictions.}
+\caption{\textbf{IWM provides a queryable per-step safety certificate; PPO-Task has no remaining-capacity estimate.} Calibrated from controlled injection experiments (FeverAnt, damage pulse $= 0.50$, $n\!=\!30$). \textit{Blue solid}: PPO-IWM actual FAC (stays near 0.71 post-injection). \textit{Blue dashed}: IWM predicted FAC — drops to ${\approx}\!0.17$ immediately after the damage pulse is injected (vertical dashed line), correctly predicting danger (measured mean error $=\!0.504$ relative to actual FAC ${\approx}\!0.67$). \textit{Red solid}: PPO-Task actual FAC (similar trajectory; also survives). \textit{Red dashed (flat at zero)}: PPO-Task carries no queryable predicted-FAC signal. The dot-dashed vertical line marks the IWM safety query firing (predicted FAC drops below the 0.5 alert threshold), providing an early warning that enables operator intervention or graceful shutdown. Both methods survive, but only IWM provides this auditable certificate. IAH\,$=\!0$ for PPO-Task because it outputs actions, not FAC predictions.}
 \label{fig:safety_cert}
 \end{figure}
 
@@ -1150,22 +1164,22 @@ NumbArm & Manipulator & $w_N{=}0.55,\,w_D{=}0.25$ & - & $w_E{=}0.15,\,w_L{=}0.05
 
 A natural concern is whether the IWM advantage on FAC is an artifact of the specific weight vector chosen. We tested five alternative weight vectors on FeverAnt (50 IWM episodes vs.\ 50 Task episodes, Mann-Whitney~U, one-sided): damage-dominant ($w_D\!=\!0.70, w_T\!=\!0.15, w_E\!=\!0.15$), temperature-dominant ($w_T\!=\!0.70$), energy-dominant ($w_E\!=\!0.70$), uniform ($w_D\!=\!w_T\!=\!w_E\!=\!0.33$), and canonical ($w_D\!=\!0.45$). \textbf{IWM $>$ Task ordering is preserved across all five weight vectors} ($p\!=\!3.5\!\times\!10^{-18}$ each). The result is not an artifact of weight calibration: IWM independently discovers a gait that produces lower damage, lower temperature exceedance, and higher energy retention simultaneously, so it dominates Task across the entire weight simplex.
 
+\vspace{-6pt}
 \subsection{FAC Variance Decomposition}
 \label{app:fac_variance}
-\vspace{-0.4\baselineskip}
-
+\vspace{-\baselineskip}
 Table~\ref{tab:main} reports IWM Final FAC $= 0.590 \pm 0.002$, an unusually tight CI. We decompose variance into between-seed ($\sigma^2_\text{seed}$) and within-seed ($\sigma^2_\text{ep}$) components. For PPO-IWM: $\sigma^2_\text{seed}(\text{FAC})\!=\!3.7\!\times\!10^{-6}$, $\sigma^2_\text{ep}(\text{FAC})\!=\!5.2\!\times\!10^{-6}$ - both near-zero. For PPO-Task: $3.8\!\times\!10^{-6}$ and $2.0\!\times\!10^{-6}$ respectively - similarly tight. In contrast, task $r$/step between-seed variance for IWM ($\sigma^2_\text{seed}\!=\!9\!\times\!10^{-4}$) is over \textbf{200$\times$ larger} than FAC between-seed variance ($3.7\!\times\!10^{-6}$), indicating that body-health outcomes are far more reliably regulated than task performance. Reactive baselines show $1000\!\times$ higher FAC variance ($\sigma^2 \sim 10^{-3}$), reflecting their unstable collapse dynamics. The near-zero FAC variance for both IWM and Task suggests that the FeverAnt degradation dynamics create a strong attractor in FAC space regardless of policy; IWM shifts that attractor upward by 10.4\%.
 
+\vspace{-6pt}
 \subsection{FAC-to-Collapse Correlation}
 \label{app:fac_collapse}
-\vspace{-0.4\baselineskip}
-
+\vspace{-\baselineskip}
 For reactive baselines (which collapse in 38--48\% of episodes), we test whether final FAC predicts episode collapse. For PPO-Energy: Spearman $\rho\!=\!-0.538$ ($p\!=\!5.6\!\times\!10^{-5}$, $n\!=\!50$) - FAC is a significant predictor of collapse, confirming its prospective validity. For PPO-Viability: $\rho\!=\!-0.07$ ($p\!=\!0.63$, n.s.) - collapse occurs but is \emph{not} predicted by final FAC, suggesting Viability collapses via gait-destabilisation rather than body-state exhaustion. PPO-IWM and PPO-Task have zero collapse; the correlation is undefined (no variance in the collapse indicator).
 
+\vspace{-6pt}
 \subsection{FAC as Prospective Metric}
 \label{app:fac_prospective}
-\vspace{-0.4\baselineskip}
-
+\vspace{-\baselineskip}
 FAC is designed to measure \emph{future} action capacity, not just current body state. We test this prospective validity by asking: does FAC at step $T$ predict survival probability at step $T\!+\!k$? For each step-observation in the reactive baseline step-trace CSVs (all 5 seeds, 10 episodes/seed, all steps recorded), we compute the Spearman correlation between FAC$(T)$ and the indicator $\mathbf{1}[\text{episode alive at } T\!+\!k]$.
 
 For PPO-Energy ($n\!=\!159{,}356$ step observations at $k\!=\!100$; 5 seeds): $k\!=\!100$: $\rho\!=\!+0.122$ ($p\!\to\!0$, machine precision); $k\!=\!500$: $\rho\!=\!+0.243$ ($p\!\to\!0$); $k\!=\!1000$: $\rho\!=\!+0.336$ ($p\!\to\!0$). For PPO-Viability ($n\!=\!171{,}264$ step observations at $k\!=\!100$; 5 seeds): $k\!=\!100$: $\rho\!=\!+0.027$ ($p\!=\!6.3\!\times\!10^{-30}$); $k\!=\!500$: $\rho\!=\!+0.081$ ($p\!=\!3.3\!\times\!10^{-232}$); $k\!=\!1000$: $\rho\!=\!+0.133$ ($p\!\to\!0$, machine precision). All correlations are positive (higher FAC $\Rightarrow$ more likely to survive) and increase monotonically with horizon $k$, confirming that FAC encodes future body capacity rather than only instantaneous state. Effect sizes are modest by design - a perfect predictor would eliminate the need for IWM - but the near-zero $p$-values across both baselines establish that FAC carries genuine prospective information even at 1000-step look-ahead. PPO-Energy shows stronger prospective correlation than PPO-Viability, consistent with Energy's single dominant failure mode (energy depletion) being more predictable from FAC than Viability's gait-destabilisation collapses.
