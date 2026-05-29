@@ -214,6 +214,15 @@ PPO-IWM trains from scratch with the IWM-shaped reward as the sole training sign
 \end{equation}
 This reward is used for learning only.  It is not a primary evaluation metric. All method comparisons report task and body outcomes separately.
 
+\begin{figure*}[h]
+\centering
+\includegraphics[width=0.99\linewidth]{figures/b_methodology.png}
+\caption{\textbf{IWM methodology overview.}
+The Interoceptive World Model (IWM) observes body state and predicts future FAC loss at four horizons ($h \in \{1,5,25,100\}$ steps), enabling coverage-gated training on near-collapse data and multi-horizon shaping of the PPO policy.
+CG-IWM and AIWM extend the trained predictor to deployment-time action gating and online EWC-regularised body-model personalization, respectively.}
+\label{fig:methods_overview}
+\end{figure*}
+
 \methodsec{Capacity-Gated IWM (deployment).}
 CG-IWM applies the trained IWM as a deployment-time action governor - no policy retraining (Appendix~\ref{app:architecture}). CG-IWM (aggressive-gait seeds 0--2, $n\!=\!30$, $\tau\!=\!0.10$) Pareto-dominates training-time baselines: r/step\,=\,$1.106\!\pm\!0.077$, FAC\,=\,$0.884\!\pm\!0.019$, 0\% collapse (Fig.~\ref{fig:cg_action_dist}). Intra-environment CG-IWM on NumbArm (5 seeds, $n\!=\!46$, same protocol) achieves FAC\,=\,$0.997\!\pm\!0.001$ vs.\ NumbArm PPO-Task FAC\,=\,$0.920$ ($+8.3\%$; $p\!=\!1.7{\times}10^{-17}$) - near-perfect body preservation; cross-environment scope conditions are in Appendix~\ref{app:scope}. The key distinction: CG-IWM produces \textbf{no IAH} (gate prevents collapse but cannot report predicted remaining capacity), whereas PPO-IWM provides a queryable IAH\,=\,379-step certificate.
 
@@ -230,15 +239,6 @@ i.e., timesteps of advance warning before body incapacitation; reactive baseline
 
 \methodsec{IAH robustness and actionability.}\label{sec:injection}
 Under controlled damage injection: PPO-IWM 30/30 survived at pulse\,=\,0.30/0.50/0.60; at extreme pulse\,=\,0.70 ($n\!=\!20$), 20/20 survived with IWM warning firing within 1--2 steps of injection. Reactive baselines collapse in 26.7--36.7\% of episodes at pulse\,=\,0.60 ($p\!\le\!0.005$ vs.\ IWM), with \emph{all} collapses occurring \textbf{before} the injection step - revealing a pre-existing stability deficit, not injection sensitivity. The IAH warning is actionable: PPO-IWM reduces $|a|$ by $4.2\%\!\pm\!0.6\%$ in the 100 steps following the warning; PPO-Task shows no change ($-0.5\%\!\pm\!0.3\%$; Fig.~\ref{fig:actionresponse}, Appendix~\ref{app:ablations}).
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.99\linewidth]{figures/b_methodology.png}
-\caption{\textbf{IWM methodology overview.}
-The Interoceptive World Model (IWM) observes body state and predicts future FAC loss at four horizons ($h \in \{1,5,25,100\}$ steps), enabling coverage-gated training on near-collapse data and multi-horizon shaping of the PPO policy.
-CG-IWM and AIWM extend the trained predictor to deployment-time action gating and online EWC-regularised body-model personalization, respectively.}
-\label{fig:methods_overview}
-\end{figure*}
 
 \section{Experiments}
 \label{sec:experiments}
