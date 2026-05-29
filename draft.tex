@@ -14,6 +14,10 @@
 \definecolor{maroonprimary}{HTML}{8B1A2E}
 \definecolor{maroonhl}{HTML}{FAE8EC}
 \usepackage{float}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{8pt plus 3pt minus 2pt}{4pt plus 2pt minus 1pt}
+\titlespacing*{\subsection}{0pt}{6pt plus 2pt minus 1pt}{3pt plus 1pt}
+\titlespacing*{\subsubsection}{0pt}{4pt plus 1pt minus 1pt}{2pt}
 \setlength{\floatsep}{4pt plus 2pt minus 1pt}
 \setlength{\textfloatsep}{8pt plus 2pt minus 4pt}
 \setlength{\intextsep}{4pt plus 2pt minus 1pt}
@@ -274,7 +278,6 @@ ThermalHopper's unobservable landing-impact pathway eliminates the IWM advantage
 \label{fig:results_overview}
 \end{figure*}
 
-Checkpoint selection uses Pareto-dominance over task reward, FAC, and survival (Appendix~\ref{app:hyperparams}). Extended per-metric results, survival comparisons, and training curves: Appendix~\ref{app:results}, \ref{app:training}.
 
 \begin{table}[t]
 \centering
@@ -298,7 +301,6 @@ AIWM (adaptive) & \multicolumn{5}{c}{(perturbation study; see Fig.~\ref{fig:pert
 \footnotetext[2]{LSTM: 88\% collapse, IAH\,=\,0; no forward body-prediction signal, memory alone cannot predict future depletion.}
 \footnotetext[3]{CG-IWM: deployment-time governor on frozen PPO-Task ($n\!=\!30$, $\tau\!=\!0.10$); no retraining. IAH\,=\,0 for all baselines.}
 
-Cross-environment scope validation: Table~\ref{tab:multienv} (Appendix~\ref{app:scope}).
 
 \begin{table}[t]
 \centering
@@ -324,7 +326,7 @@ LSTM-PPO & \multicolumn{2}{c}{0.660 / \textbf{88\% collapse}} & \multicolumn{2}{
 \raggedright\footnotesize{$\dagger$~Surviving eps.\ only (selection bias). $\ddagger$~ThermalHopper landing-impact unobservable to IWM; validates scope condition.}
 \end{table}
 
-Survival comparisons and per-joint torque analysis: Figures~\ref{fig:survival},~\ref{fig:torque_violin},~\ref{fig:ctrl_fac_scatter} (Appendix~\ref{app:results}). Cross-environment per-seed data: Table~\ref{tab:multienv} (Appendix~\ref{app:scope}). Ablation bar charts and full table: Figures~\ref{fig:ablation},~\ref{fig:ablationcurves}, Table~\ref{tab:ablations} (Appendix~\ref{app:ablations}).
+Extended evidence is collected in the appendix: survival comparisons, training curves, and per-joint torque analysis (Appendix~\ref{app:results}); cross-environment per-seed breakdowns with observability scope validation (Table~\ref{tab:multienv}, Appendix~\ref{app:scope}); ablation bar charts and full ablation table (Table~\ref{tab:ablations}, Appendix~\ref{app:ablations}); and checkpoint selection via Pareto-dominance over task reward, FAC, and survival (Appendix~\ref{app:hyperparams}).
 
 \section{Discussion}
 \label{sec:discussion}
